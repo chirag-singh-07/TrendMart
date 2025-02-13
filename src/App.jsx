@@ -9,7 +9,6 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import ProfilePage from "./pages/ProfilePage";
-import CartPage from "./pages/CartPage";
 import Wishlish from "./pages/Wishlish";
 import OrdersPage from "./pages/OrdersPage";
 import CollectionPage from "./pages/CollectionPage";
@@ -32,7 +31,6 @@ const App = () => {
       <Route element={<AuthGuard />}>
         <Route path="/" element={<PageLayout />}>
           <Route path="profile" element={<ProfilePage />} />
-          <Route path="cart" element={<CartPage />} />
           <Route path="wishlist" element={<Wishlish />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="collections" element={<CollectionPage />} />

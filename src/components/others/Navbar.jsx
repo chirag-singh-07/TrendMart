@@ -1,15 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { navLinks } from "@/utils";
-import {
-  Archive,
-  Heart,
-  LogOut,
-  Menu,
-  Search,
-  ShoppingBag,
-  User,
-} from "lucide-react";
+import { Archive, Heart, LogOut, Menu, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
@@ -21,13 +13,14 @@ import {
 import { DropdownMenuLabel } from "@radix-ui/react-dropdown-menu";
 import SearchBar from "./SearchBar";
 import Sidebar from "./Sidebar";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import { Sheet,  SheetTrigger } from "../ui/sheet";
 import { useState } from "react";
+import { isLoggind, user } from "@/constants";
+import CartDrawer from "./CartDrawer";
 
-const Navbar = ({ isLoggind, user }) => {
+const Navbar = () => {
   // const isLoggind = true;
   const [open, setOpen] = useState(false);
-  const cartItems = "";
 
   const handleOpenSideBar = () => {
     setOpen(!open);
@@ -58,18 +51,11 @@ const Navbar = ({ isLoggind, user }) => {
               <div className="overflow-hidden cursor-pointer">
                 <SearchBar />
               </div>
-              <Link to={"/cart"}>
-                <span className="relative">
-                  <ShoppingBag className="size-7" />
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-2 text-sm">
-                    {(cartItems && cartItems) || " "}
-                  </span>
-                </span>
-              </Link>
+              <CartDrawer />
               <DropdownMenu className="w-96">
                 <DropdownMenuTrigger asChild>
                   <Avatar className="cursor-pointer size-8 rounded-full">
-                    <AvatarImage src={user.profilePics} alt="user profile" />
+                    <AvatarImage src={user.profilePic} alt="user profile" />
                     <AvatarFallback className="bg-black text-white px-2 py-1">
                       {user.fullName?.slice(0, 2).toUpperCase() || "NA"}
                     </AvatarFallback>
@@ -123,9 +109,9 @@ const Navbar = ({ isLoggind, user }) => {
                       onClick={handleOpenSideBar}
                     />
                   </SheetTrigger>
-                  <SheetContent>
-                    <Sidebar />
-                  </SheetContent>
+                  {/* <SheetContent> */}
+                  <Sidebar />
+                  {/* </SheetContent> */}
                 </Sheet>
               </div>
             </div>
