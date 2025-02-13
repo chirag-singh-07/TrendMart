@@ -1,9 +1,5 @@
-
-
 const LoginPage = () => {
-  return (
-    <div>LoginPage</div>
-  )
-}
+  return <div className="flex items-center justify-center">LoginPage</div>;
+};
 
-export default LoginPage
+export default LoginPage;

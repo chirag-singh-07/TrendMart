@@ -15,6 +15,7 @@ import CollectionPage from "./pages/CollectionPage";
 import PageLayout from "./layout/pageLayout";
 import AuthGuard from "./routes/AuthGuard";
 import GuestGuard from "./routes/GuestGuard";
+import AuthLayout from "./layout/AuthLayout";
 
 const App = () => {
   // const isLogged = true;
@@ -39,11 +40,13 @@ const App = () => {
 
       {/* Guest Routes (Only for Unauthenticated Users) */}
       <Route element={<GuestGuard />}>
+        <Route element={<AuthLayout />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
+        </Route>
       </Route>
 
       {/* Catch-All Route for 404 */}

@@ -1,4 +1,4 @@
-export const isLoggind = true;
+export const isLoggind = false;
 
 export const user = {
   fullName: "Johan",
