@@ -41,11 +41,18 @@ const App = () => {
       {/* Guest Routes (Only for Unauthenticated Users) */}
       <Route element={<GuestGuard />}>
         <Route element={<AuthLayout />}>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
+
+          
+          {/* Additional Protected Routes */}
+          {/* <Route path="/terms-of-service" element={<DashboardPage />} /> */}
+          {/* <Route path="/privacy-policy" element={<DashboardPage />} /> */}
+          {/* <Route path="/cookie-policy" element={<DashboardPage />} /> */}
+          {/* <Route path="/data-protection-policy" element={<DashboardPage />} /> */}
         </Route>
       </Route>
 

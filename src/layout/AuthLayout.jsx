@@ -1,12 +1,12 @@
 import { Link, Outlet } from "react-router-dom";
-import image from "../../public/1.jpg";
+import image from "/1.jpg";
 import AuthNavbar from "@/pages/AuthNavbar";
 import AuthFooter from "@/pages/AuthFooter";
 
 const AuthLayout = () => {
   return (
     <>
-      <AuthNavbar/>
+      <AuthNavbar />
       <main className="flex h-screen w-full">
         {/* <div className="w-full bg-white mx-auto flex items-center justify-center rounded-3xl shadow-xl"> */}
         {/* Left Side - Image (Hidden on md and smaller screens) */}
@@ -39,13 +39,13 @@ const AuthLayout = () => {
 
         {/* Right Side - Authentication Form (Full Width on Small Screens) */}
         <div className="w-full md:w-1/2 flex items-center justify-center">
-          <div className="w-full max-w-md p-6">
+          <div className="w-full p-20">
             <Outlet />
           </div>
         </div>
         {/* </div> */}
       </main>
-      <AuthFooter/>
+      <AuthFooter />
     </>
   );
 };
