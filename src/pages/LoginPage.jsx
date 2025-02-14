@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useAuthStore } from "@/store/authStore";
 import { LoginValidateForm } from "@/utils/validation";
 import { Eye, EyeClosed } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,6 +14,9 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const { login } = useAuthStore();
 
   const handleShowPasswordToggle = () => {
     setShowPassword(!showPassword);
@@ -31,13 +36,14 @@ const LoginPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
     if (LoginValidateForm(formData, setErrors)) {
       console.log("Form submitted successfully", formData);
+      await login(formData, toast, navigate);
     } else {
-      // console.log("Form has errors", errors);
+      console.log("Form validation failed", errors);
     }
   };
 
@@ -109,7 +115,9 @@ const LoginPage = () => {
 
             <div className="flex items-center justify-between gap-6 text-lg mt-5">
               <div>
-                <Link to={"/forgot-password"} className="text-purple-500">Forgot Password?</Link>
+                <Link to={"/forgot-password"} className="text-purple-500">
+                  Forgot Password?
+                </Link>
               </div>
               <p>
                 {`Don't have an account?`}{" "}

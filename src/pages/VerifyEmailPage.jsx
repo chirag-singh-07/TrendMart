@@ -1,21 +1,27 @@
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useAuthStore } from "@/store/authStore";
+import { Loader } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const VerifyEmailPage = () => {
-  const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [optCode, setOptCode] = useState(["", "", "", "", "", ""]);
   const inuptRefs = useRef([]);
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const { verifyEmail, isLoading } = useAuthStore();
 
   const handleChange = (index, value) => {
-    const newCode = [...code];
+    const newCode = [...optCode];
 
     if (value.length > 1) {
       const pastedCode = value.slice(0, 6).split("");
       for (let i = 0; i < 6; i++) {
         newCode[i] = pastedCode[i] || "";
       }
-      setCode(newCode);
+      setOptCode(newCode);
 
       const lastFilledIndex = newCode.findLastIndex((d) => d !== "");
       const focusIndex = lastFilledIndex < 5 ? lastFilledIndex + 1 : 5;
@@ -23,7 +29,7 @@ const VerifyEmailPage = () => {
       inuptRefs.current[focusIndex].focus();
     } else {
       newCode[index] = value;
-      setCode(newCode);
+      setOptCode(newCode);
 
       if (value && index < 5) {
         inuptRefs.current[index + 1].focus();
@@ -32,25 +38,37 @@ const VerifyEmailPage = () => {
   };
 
   const handleKeyDown = (index, e) => {
-    if (e.key === "Backspace" && !code[index] && index > 0) {
+    if (e.key === "Backspace" && !optCode[index] && index > 0) {
       // setCode((prev) => [...prev.slice(0, index - 1), "",...prev.slice(index)]);
       inuptRefs.current[index - 1].focus();
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const verificationCode = code.join("");
-    console.log("Code", verificationCode);
+    const code = optCode.join("");
+    console.log("code",code);
     
+    try {
+      await verifyEmail(code, toast, navigate);
+    } catch (error) {
+      toast({
+        position: "top-right",
+        title: "failed to verify email",
+        type: "error",
+        variant: "destructive",
+      });
+      // clear input fields on error
+      console.log(error);
+    }
   };
 
   // auto submit when all fields are filled
   useEffect(() => {
-    if (code.every((d) => d !== "")) {
+    if (optCode.every((d) => d !== "")) {
       handleSubmit(new Event("submit"));
     }
-  }, [code]);
+  }, [optCode]);
 
   return (
     <div className=" w-full overflow-hidden flex items-center justify-center">
@@ -62,7 +80,7 @@ const VerifyEmailPage = () => {
         </p>
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="flex justify-between gap-6">
-            {code.map((d, index) => (
+            {optCode.map((d, index) => (
               <input
                 key={index}
                 type="text"
@@ -72,7 +90,7 @@ const VerifyEmailPage = () => {
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 className={`w-12 h-12 text-center border text-semibold border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  index === code.length - 1 && "border-blue-500"
+                  index === optCode.length - 1 && "border-blue-500"
                 }`}
               />
             ))}
@@ -81,9 +99,13 @@ const VerifyEmailPage = () => {
             type="submit"
             className="w-full h-12 text-white font-bold rounded-lg shadow-sm hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
             // onClick={() => navigate("/dashboard")}
-            disabled={code.every((d) => d === "")}
+            disabled={optCode.every((d) => d === "") || isLoading}
           >
-            Verify Email
+            {isLoading ? (
+              <Loader className="animate-spin duration-300 " />
+            ) : (
+              " Verify Email"
+            )}
           </Button>
         </form>
 

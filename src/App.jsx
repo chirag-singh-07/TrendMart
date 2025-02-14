@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -21,9 +20,22 @@ import PrivacyAndPolicy from "./pages/PrivacyAndPolicy";
 import CookiePolicyPage from "./pages/CookiePolicyPage";
 import DataProtectionPolicyPage from "./pages/DataProtectionPolicyPage";
 import DetailLayout from "./layout/DetailLayout";
+import { useAuthStore } from "./store/authStore";
+import { useEffect } from "react";
+import { Loader } from "lucide-react";
+import LoadingSpinComponent from "./components/others/LoadingSpinComponent";
 
 const App = () => {
   // const isLogged = true;
+  const { isCheckingAuth, checkAuth, isAuthenticated, user } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  if (isCheckingAuth) {
+    return <LoadingSpinComponent/>;
+  }
 
   return (
     <Routes>
