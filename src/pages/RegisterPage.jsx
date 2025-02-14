@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useAuthStore } from "@/store/authStore";
 import { RegisterValidateForm } from "@/utils/validation";
-import { Eye, EyeClosed } from "lucide-react";
+import { Eye, EyeClosed, Loader } from "lucide-react";
 import { useState } from "react";
 // import { UserIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +16,9 @@ const RegisterPage = () => {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { signUp, isLoading } = useAuthStore();
 
   const handleShowPasswordToggle = () => {
     setShowPassword(!showPassword);
@@ -32,13 +37,23 @@ const RegisterPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
-    if (RegisterValidateForm(formData, setErrors)) {
-      console.log("Form submitted successfully", formData);
-    } else {
-      // console.log("Form has errors", errors);
+    try {
+      if (RegisterValidateForm(formData, setErrors)) {
+        console.log("Form submitted successfully", formData);
+        await signUp(formData, toast, navigate);
+        // navigate("/verify-email");
+      } else {
+        console.log("Form has errors", errors);
+        toast({
+          variant: "destructive",
+          description: "Please filled the all fields",
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -46,7 +61,7 @@ const RegisterPage = () => {
     <div className="flex items-center justify-center gap-6 bg-white">
       <div className=" flex flex-col items-center justify-center gap-4 overflow-hidden">
         <div className="">
-          <h1 className="text-5xl font-semibold mb-5 text-center mt-8  ">
+          <h1 className="text-4xl font-semibold mb-5 text-center mt-8  ">
             Join TrendMart Today!
           </h1>
           <p className="text-center text-medium tracking-tighter mb-10 text-gray-500">
@@ -71,7 +86,7 @@ const RegisterPage = () => {
                   ${
                     submitted && errors.fullName
                       ? "border-red-500"
-                      : "border-gray-100"
+                      : "border-gray-400"
                   }
                 `}
                 placeholder="Enter your full name"
@@ -94,7 +109,7 @@ const RegisterPage = () => {
                   ${
                     submitted && errors.email
                       ? "border-red-500"
-                      : "border-gray-100"
+                      : "border-gray-400"
                   }
                 `}
                 placeholder="Enter your email"
@@ -117,7 +132,7 @@ const RegisterPage = () => {
                   ${
                     submitted && errors.password
                       ? "border-red-500"
-                      : "border-gray-100"
+                      : "border-gray-400"
                   }
                 `}
                 placeholder="Enter your password"
@@ -154,8 +169,13 @@ const RegisterPage = () => {
               <Button
                 type="submit"
                 className="text-lg font-bold py-6 active:scale-[.98] active:duration-75 transition-all "
+                disabled={isLoading}
               >
-                Create Account
+                {isLoading ? (
+                  <Loader className="animate-spin mx-auto" size={34} />
+                ) : (
+                  "Create Account"
+                )}
               </Button>
               <Button
                 variant="outline"

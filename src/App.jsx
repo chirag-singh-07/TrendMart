@@ -16,6 +16,11 @@ import PageLayout from "./layout/pageLayout";
 import AuthGuard from "./routes/AuthGuard";
 import GuestGuard from "./routes/GuestGuard";
 import AuthLayout from "./layout/AuthLayout";
+import TermsAndServicePage from "./pages/TermsAndServicePage";
+import PrivacyAndPolicy from "./pages/PrivacyAndPolicy";
+import CookiePolicyPage from "./pages/CookiePolicyPage";
+import DataProtectionPolicyPage from "./pages/DataProtectionPolicyPage";
+import DetailLayout from "./layout/DetailLayout";
 
 const App = () => {
   // const isLogged = true;
@@ -25,7 +30,6 @@ const App = () => {
       {/* Public Routes (Accessible to Everyone) */}
       <Route path="/" element={<PageLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="about" element={<AboutPage />} />
       </Route>
 
       {/* Protected Routes (Require Authentication) */}
@@ -43,17 +47,28 @@ const App = () => {
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+        </Route>
+        <Route element={<AuthLayout />}>
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/verify-email" element={<VerifyEmailPage />} />
-
-          
-          {/* Additional Protected Routes */}
-          {/* <Route path="/terms-of-service" element={<DashboardPage />} /> */}
-          {/* <Route path="/privacy-policy" element={<DashboardPage />} /> */}
-          {/* <Route path="/cookie-policy" element={<DashboardPage />} /> */}
-          {/* <Route path="/data-protection-policy" element={<DashboardPage />} /> */}
         </Route>
+      </Route>
+
+      {/* Email Verification (Accessible to authenticated but unverified users) */}
+      <Route element={<AuthLayout />}>
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+      </Route>
+
+      {/* Public Pages (Accessible to Everyone) */}
+      <Route element={<DetailLayout />}>
+        <Route path="/terms-of-service" element={<TermsAndServicePage />} />
+        <Route path="/privacy-policy" element={<PrivacyAndPolicy />} />
+        <Route path="/cookie-policy" element={<CookiePolicyPage />} />
+        <Route path="about" element={<AboutPage />} />
+        <Route
+          path="/data-protection-policy"
+          element={<DataProtectionPolicyPage />}
+        />
       </Route>
 
       {/* Catch-All Route for 404 */}

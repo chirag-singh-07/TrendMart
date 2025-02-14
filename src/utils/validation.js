@@ -1,4 +1,5 @@
 import {
+  forgotPasswordFormValidateSchema,
   loginFormValidateSchema,
   registerFormValidateSchema,
 } from "@/constants/validationSchema";
@@ -63,5 +64,32 @@ export const LoginValidateForm = (formData, setErrors) => {
   }
 
   setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
+export const ResetPasswordForm = (formData, setErrors) => {
+  let newErrors = {};
+
+  if (!formData.newPassword) {
+    newErrors.newPassword = "Password is required";
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
+export const ForgotPasswordForm = (formData, setErrors) => {
+  let newErrors = {};
+  if (!formData.email) {
+    newErrors.email = "Email is required";
+  } else if (!formData.email.trim()) {
+    newErrors.email = "Email is required";
+  } else if (
+    !formData.email.match(forgotPasswordFormValidateSchema.email.pattern)
+  ) {
+    newErrors.email = forgotPasswordFormValidateSchema.email.message;
+  }
+  setErrors(newErrors);
+
   return Object.keys(newErrors).length === 0;
 };

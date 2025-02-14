@@ -30,3 +30,20 @@ export const loginFormValidateSchema = {
     message: "Password must be at least 6 characters long and contain a number",
   },
 };
+
+export const resetPasswordValidateSchema = {
+  newPassword: {
+    required: true,
+    minLength: 6,
+    pattern: /\d/, // Must contain at least one number
+    message: "Password must be at least 6 characters long and contain a number",
+  },
+};
+
+export const forgotPasswordFormValidateSchema = {
+  email: {
+    required: true,
+    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Basic email regex
+    message: "Invalid email format",
+  },
+};

@@ -65,7 +65,7 @@ const LoginPage = () => {
                   ${
                     submitted && errors.email
                       ? "border-red-500"
-                      : "border-gray-100"
+                      : "border-gray-400"
                   }
                 `}
                 placeholder="Enter your email"
@@ -88,7 +88,7 @@ const LoginPage = () => {
                   ${
                     submitted && errors.password
                       ? "border-red-500"
-                      : "border-gray-100"
+                      : "border-gray-400"
                   }
                 `}
                 placeholder="Enter your password"
@@ -109,11 +109,14 @@ const LoginPage = () => {
 
             <div className="flex items-center justify-between gap-6 text-lg mt-5">
               <div>
-                <Link className="text-purple-500">Forgot Password?</Link>
+                <Link to={"/forgot-password"} className="text-purple-500">Forgot Password?</Link>
               </div>
               <p>
                 {`Don't have an account?`}{" "}
-                <Link to={"/register"} className="text-purple-500 hover:underline">
+                <Link
+                  to={"/register"}
+                  className="text-purple-500 hover:underline"
+                >
                   Sign Up
                 </Link>
               </p>
@@ -137,12 +140,15 @@ const LoginPage = () => {
             <div className="text-center mt-8">
               <p>
                 {`By continuing, you agree to our `}
-                <Link to={"/terms"} className="text-purple-500 hover:underline">
+                <Link
+                  to={"/terms-of-service"}
+                  className="text-purple-500 hover:underline"
+                >
                   Terms & Conditions
                 </Link>{" "}
                 and{" "}
                 <Link
-                  to={"/privacy"}
+                  to={"/privacy-policy"}
                   className="text-purple-500 hover:underline"
                 >
                   Privacy Policy
