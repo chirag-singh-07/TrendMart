@@ -46,14 +46,15 @@ const RegisterPage = () => {
         await signUp(formData, toast, navigate);
         // navigate("/verify-email");
       } else {
-        console.log("Form has errors", errors);
-        toast({
-          variant: "destructive",
-          description: "Please filled the all fields",
-        });
+        setSubmitted(false);
       }
     } catch (error) {
       console.log(error);
+      toast({
+        variant: "destructive",
+        description: "An error occurred while signing up",
+      });
+      setSubmitted(false);
     }
   };
 

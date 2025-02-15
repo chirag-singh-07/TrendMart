@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useAuthStore } from "@/store/authStore";
 import { ForgotPasswordForm } from "@/utils/validation";
+import { KeyRound, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +12,9 @@ const ForgotPassword = () => {
   });
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const { forgotPasswordApi, isLoading } = useAuthStore();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,18 +35,31 @@ const ForgotPassword = () => {
     setSubmitted(true);
     try {
       if (ForgotPasswordForm(formData, setErrors)) {
-        console.log("Form submitted successfully", formData);
+        // console.log("Form submitted successfully", formData);
+        await forgotPasswordApi(formData, toast, navigate);
       } else {
-        console.log("Form has errors", errors);
+        // console.log("Form has errors", errors);
+        setSubmitted(false);
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [name]: "",
+        }));
       }
     } catch (error) {
       console.log(error);
+      setSubmitted(false);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: error.message,
+      }));
     }
   };
 
   return (
     <div className="flex items-center justify-center gap-6 flex-col">
       <div className="p-2 flex justify-center items-center flex-col ">
+        {/* <Key size={120} className="mb-10 animate-pulse"/> */}
+        <KeyRound size={120} className="mb-10 animate-pulse" />
         <h2 className="text-3xl font-bold mb-5 text-center ">
           Forgot Your Password?
         </h2>
@@ -77,7 +96,7 @@ const ForgotPassword = () => {
             type="submit"
             className={` text-lg w-full h-12 px-12 py-3 text-white font-medium rounded-xl bg-primary hover:bg-primary-dark shadow-sm transition duration-300 ease-in-out `}
           >
-            Send Link
+            {isLoading ? <Loader2 className="animate-spin" /> : "Send Link"}
           </Button>
         </form>
         <p className="text-sm text-center text-gray-400 mt-5">

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import { toast } from "sonner";
 
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:8000/api/user";
@@ -48,7 +49,7 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  login: async (formData, toast, navigate) => {
+  login: async (formData, navigate) => {
     set({ isLoading: true, error: null });
     try {
       const response = await axios.post(`${API_URL}/auth/login`, formData);
@@ -58,24 +59,28 @@ export const useAuthStore = create((set) => ({
         isAuthenticated: true,
         error: null,
       });
-      toast({
-        position: "top-right",
-        title: "Logged in successfully",
-        type: "success",
-      });
+      // toast({
+      //   position: "top-right",
+      //   title: response.data.message || "Logged in successfully",
+      //   type: "success",
+      // });
+      // toast.success("Logged in successfully", {
+      //   duration: 3000,
+      //   autoClose: true,
+      // });
       navigate("/");
+      // toast.success("Event has been created.");
     } catch (error) {
-      set({
-        isLoading: false,
-        error: error.response.data.message || "Error login ",
-      });
-      toast({
-        position: "top-right",
-        title: error.response.data.message || "Uh oh! Something went wrong.",
-        description: "There was a problem with your signUp.",
-        type: "error",
-        variant: "destructive",
-      });
+      const errorMessage = error.response?.data?.message || "Error logging in";
+      toast.error(errorMessage);
+      // Delay state update slightly to ensure toast renders
+      setTimeout(() => {
+        set({
+          isLoading: false,
+          error: errorMessage,
+        });
+      }, 100);
+
       throw error;
     }
   },
@@ -115,7 +120,7 @@ export const useAuthStore = create((set) => ({
       throw error;
     }
   },
-  logout: async () => {
+  logout: async (navigate) => {
     set({ isLoading: true, error: null });
     try {
       await axios.post(`${API_URL}/auth/logout`);
@@ -125,6 +130,7 @@ export const useAuthStore = create((set) => ({
         isAuthenticated: false,
         error: null,
       });
+      navigate("/login");
     } catch (error) {
       set({
         isLoading: false,
@@ -134,7 +140,6 @@ export const useAuthStore = create((set) => ({
   },
 
   checkAuth: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
     set({ isLoading: true, error: null, isCheckingAuth: true });
     try {
       const response = await axios.get(`${API_URL}/auth/check-auth`);
@@ -151,6 +156,66 @@ export const useAuthStore = create((set) => ({
         error: error.response.data.message || "Error checking auth ",
         isCheckingAuth: false,
       });
+    }
+  },
+  forgotPasswordApi: async (formData, toast, navigate) => {
+    set({ isLoading: true, error: null });
+    try {
+      await axios.post(`${API_URL}/auth/forgot-password`, formData);
+      set({
+        isLoading: false,
+        error: null,
+      });
+      toast({
+        position: "top-right",
+        title: "Password reset link sent successfully",
+        type: "success",
+      });
+      navigate("/forgot-password-sent");
+    } catch (error) {
+      set({
+        isLoading: false,
+        error:
+          error.response.data.message || "Error sending password reset link ",
+      });
+      toast({
+        position: "top-right",
+        title: error.response.data.message || "Uh oh! Something went wrong.",
+        description: "There was a problem with your signUp.",
+        type: "error",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  },
+  resetPasswordApi: async (formData, token, toast, navigate) => {
+    console.log("Reset Password Token:", token);
+    set({ isLoading: true, error: null });
+    try {
+      await axios.post(`${API_URL}/auth/reset-password/${token}`, formData);
+      set({
+        isLoading: false,
+        error: null,
+      });
+      toast({
+        position: "top-right",
+        title: "Password reset successfully",
+        type: "success",
+      });
+      navigate("/login");
+    } catch (error) {
+      set({
+        isLoading: false,
+        error: error.response.data.message || "Error resetting password ",
+      });
+      toast({
+        position: "top-right",
+        title: error.response.data.message || "Uh oh! Something went wrong.",
+        description: "There was a problem with your signUp.",
+        type: "error",
+        variant: "destructive",
+      });
+      throw error;
     }
   },
 }));

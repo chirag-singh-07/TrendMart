@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+// import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useAuthStore } from "@/store/authStore";
 import { LoginValidateForm } from "@/utils/validation";
 import { Eye, EyeClosed } from "lucide-react";
@@ -14,7 +15,7 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
-  const { toast } = useToast();
+  // const { toast } = useToast();
   const navigate = useNavigate();
   const { login } = useAuthStore();
 
@@ -40,10 +41,13 @@ const LoginPage = () => {
     e.preventDefault();
     setSubmitted(true);
     if (LoginValidateForm(formData, setErrors)) {
-      console.log("Form submitted successfully", formData);
+      // console.log("Form submitted successfully", formData);
+
       await login(formData, toast, navigate);
     } else {
-      console.log("Form validation failed", errors);
+      // console.log("Form validation failed", errors);
+      setSubmitted(false);
+      return;
     }
   };
 

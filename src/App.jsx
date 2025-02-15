@@ -22,19 +22,20 @@ import DataProtectionPolicyPage from "./pages/DataProtectionPolicyPage";
 import DetailLayout from "./layout/DetailLayout";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
-import { Loader } from "lucide-react";
-import LoadingSpinComponent from "./components/others/LoadingSpinComponent";
+import Loader from "./components/others/Loader";
+import ForgotPasswordSentPage from "./pages/ForgotPasswordSentPage";
 
 const App = () => {
   // const isLogged = true;
-  const { isCheckingAuth, checkAuth, isAuthenticated, user } = useAuthStore();
+  const { isCheckingAuth, checkAuth } = useAuthStore();
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
   if (isCheckingAuth) {
-    return <LoadingSpinComponent/>;
+    // return <LoadingSpinComponent/>;
+    return <Loader />;
   }
 
   return (
@@ -62,7 +63,14 @@ const App = () => {
         </Route>
         <Route element={<AuthLayout />}>
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route
+            path="/reset-password/:token"
+            element={<ResetPasswordPage />}
+          />
+          <Route
+            path="/forgot-password-sent"
+            element={<ForgotPasswordSentPage />}
+          />
         </Route>
       </Route>
 

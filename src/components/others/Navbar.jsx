@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { navLinks } from "@/utils";
-import { Archive, Heart, LogOut, Menu, User } from "lucide-react";
+import { Archive, Heart, Loader2, LogOut, Menu, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
@@ -21,10 +21,15 @@ import { useAuthStore } from "@/store/authStore";
 const Navbar = () => {
   // const isLoggind = true;
   const [open, setOpen] = useState(false);
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, logout, isLoading } = useAuthStore();
+  const navigate = useNavigate();
 
   const handleOpenSideBar = () => {
     setOpen(!open);
+  };
+
+  const handleLogout = async () => {
+    await logout(navigate);
   };
 
   return (
@@ -94,9 +99,14 @@ const Navbar = () => {
                   <DropdownMenuItem>
                     <Button
                       className="bg-red-600 w-full cursor-pointer flex text-lg gap-2"
-                      onClick={() => console.log("Logout")}
+                      onClick={handleLogout}
                     >
-                      <LogOut /> Logout
+                      <LogOut />{" "}
+                      {isLoading ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        "Logout"
+                      )}
                     </Button>
                   </DropdownMenuItem>
                 </DropdownMenuContent>

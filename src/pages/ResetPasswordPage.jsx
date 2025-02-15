@@ -1,8 +1,11 @@
 import PasswordStrengthMeter from "@/components/others/PasswordStrengthMeter";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useAuthStore } from "@/store/authStore";
 import { ResetPasswordForm } from "@/utils/validation";
+import { Loader, LockKeyholeOpen } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const ResetPasswordPage = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +13,10 @@ const ResetPasswordPage = () => {
   });
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const { resetPasswordApi, isLoading } = useAuthStore();
+  const { token } = useParams();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,21 +37,34 @@ const ResetPasswordPage = () => {
     setSubmitted(true);
     try {
       if (ResetPasswordForm(formData, setErrors)) {
-        console.log("Form submitted successfully", formData);
+        // console.log("Form submitted successfully", formData);
+        await resetPasswordApi(formData, token, toast, navigate);
+        // Reset form after successful password reset
+        setErrors({});
       } else {
-        console.log("Form has errors", errors);
+        // console.log("Form has errors", errors);
+        setSubmitted(false);
+        return;
       }
     } catch (error) {
       console.log(error);
+      setSubmitted(false);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: error.message,
+      }));
     }
   };
 
   return (
     <div className="flex items-center justify-center gap-6 p-6 flex-col">
       <div className="p-2 flex justify-center items-center flex-col ">
-        <h2 className="text-3xl font-bold mb-5 text-center ">
-          Reset Your Password
-        </h2>
+        <div className="flex  gap-4 items-center justify-center">
+          <LockKeyholeOpen size={40} className="mb-6" />
+          <h2 className="text-3xl font-bold mb-5 text-center ">
+            Reset Your Password
+          </h2>
+        </div>
         <p className="text-lg text-gray-400 text-center">
           Enter your new password to complete the password reset process.
         </p>
@@ -81,7 +101,7 @@ const ResetPasswordPage = () => {
             type="submit"
             className={`w-full h-12 px-12 py-3 text-white font-medium rounded-xl bg-primary hover:bg-primary-dark shadow-sm transition duration-300 ease-in-out `}
           >
-            Reset Password{" "}
+            {isLoading ? <Loader className="animate-spin" /> : "Reset Password"}{" "}
           </Button>
         </form>
         <p className="text-sm text-center text-gray-400 mt-5">

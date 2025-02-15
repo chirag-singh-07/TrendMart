@@ -1,4 +1,4 @@
-import { LogOut } from "lucide-react";
+import { Loader2, LogOut } from "lucide-react";
 import {
   SheetContent,
   SheetDescription,
@@ -7,10 +7,18 @@ import {
 } from "../ui/sheet";
 import { Separator } from "../ui/separator";
 import { navLinks } from "@/utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
+import { useAuthStore } from "@/store/authStore";
 
 const Sidebar = () => {
+  const { logout, isLoading } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout(navigate);
+  };
+
   return (
     // <Sheet className="w-64 h-full fixed top-0 left-0 bg-white shadow-lg">
     <SheetContent>
@@ -33,9 +41,10 @@ const Sidebar = () => {
       <Separator className="mb-4 mt-4" />
       <Button
         className="bg-red-600 w-full cursor-pointer flex text-lg gap-2"
-        onClick={() => console.log("Logout")}
+        onClick={handleLogout}
       >
-        <LogOut /> Logout
+        <LogOut />
+        {isLoading ? <Loader2 className="animate-spin" /> : " Logout"}
       </Button>
     </SheetContent>
     // </Sheet>
