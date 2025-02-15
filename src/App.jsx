@@ -11,7 +11,7 @@ import ProfilePage from "./pages/ProfilePage";
 import Wishlish from "./pages/Wishlish";
 import OrdersPage from "./pages/OrdersPage";
 import CollectionPage from "./pages/CollectionPage";
-import PageLayout from "./layout/pageLayout";
+import PageLayout from "./layout/PageLayout";
 import AuthGuard from "./routes/AuthGuard";
 import GuestGuard from "./routes/GuestGuard";
 import AuthLayout from "./layout/AuthLayout";
