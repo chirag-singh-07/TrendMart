@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import axios from "axios";
-import { toast } from "sonner";
 
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:8000/api/user";
@@ -26,71 +25,86 @@ export const useAuthStore = create((set) => ({
         isAuthenticated: true,
         error: null,
       });
+
       toast({
         position: "top-right",
         title: "Signed up successfully",
         type: "success",
       });
+
       console.log("Sign-up response:", response.data.data.isVerified);
       navigate("/verify-email");
     } catch (error) {
+      const errorMessage = error.response?.data?.message || "Error signing up";
+
       set({
         isLoading: false,
-        error: error.response.data.message || "Error signing up ",
+        error: errorMessage,
       });
+
       toast({
         position: "top-right",
-        title: error.response.data.message || "Uh oh! Something went wrong.",
-        description: "There was a problem with your signUp.",
+        title: "Uh oh! Something went wrong.",
+        description: errorMessage, // Shows backend error message
         type: "error",
         variant: "destructive",
       });
+
       throw error;
     }
   },
 
-  login: async (formData, navigate) => {
+  login: async (formData, toast, navigate) => {
     set({ isLoading: true, error: null });
+
     try {
       const response = await axios.post(`${API_URL}/auth/login`, formData);
+
       set({
         user: response.data.data,
         isLoading: false,
         isAuthenticated: true,
         error: null,
       });
-      // toast({
-      //   position: "top-right",
-      //   title: response.data.message || "Logged in successfully",
-      //   type: "success",
-      // });
-      // toast.success("Logged in successfully", {
-      //   duration: 3000,
-      //   autoClose: true,
-      // });
-      navigate("/");
-      // toast.success("Event has been created.");
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || "Error logging in";
-      toast.error(errorMessage);
-      // Delay state update slightly to ensure toast renders
-      setTimeout(() => {
-        set({
-          isLoading: false,
-          error: errorMessage,
-        });
-      }, 100);
 
-      throw error;
+      toast({
+        position: "top-right",
+        title: "Logged in successfully",
+        type: "success",
+      });
+
+      console.log("Login response:", response.data.data.isVerified);
+
+      navigate("/");
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "An unexpected error occurred during login.";
+
+      set({
+        isLoading: false,
+        error: errorMessage,
+      });
+
+      toast({
+        position: "top-right",
+        title: "Login Failed",
+        description: errorMessage, // Shows backend error message
+        type: "error",
+        variant: "destructive",
+      });
+
+      console.error("Login error:", errorMessage);
     }
   },
-
   verifyEmail: async (code, toast, navigate) => {
     set({ isLoading: true, error: null });
+
     try {
       const response = await axios.post(`${API_URL}/auth/verify-email`, {
         code,
       });
+
       set({
         user: response.data.data,
         isLoading: false,
@@ -103,46 +117,79 @@ export const useAuthStore = create((set) => ({
         title: "Email verified successfully",
         type: "success",
       });
+
       navigate("/");
+
       return response.data.data;
     } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "An unexpected error occurred during email verification.";
+
       set({
         isLoading: false,
-        error: error.response.data.message || "Error verify email ",
+        error: errorMessage,
       });
+
       toast({
         position: "top-right",
-        title: error.response.data.message || "Uh oh! Something went wrong.",
-        description: "There was a problem with your signUp.",
+        title: "Email Verification Failed",
+        description: errorMessage, // Shows backend error message
         type: "error",
         variant: "destructive",
       });
-      throw error;
+
+      console.error("Email verification error:", errorMessage);
     }
   },
-  logout: async (navigate) => {
+
+  logout: async (toast, navigate) => {
     set({ isLoading: true, error: null });
+
     try {
       await axios.post(`${API_URL}/auth/logout`);
+
       set({
         user: null,
         isLoading: false,
         isAuthenticated: false,
         error: null,
       });
+
+      toast({
+        position: "top-right",
+        title: "Logged out successfully",
+        type: "success",
+      });
+
       navigate("/login");
     } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "An unexpected error occurred during logout.";
+
       set({
         isLoading: false,
-        error: error.response.data.message || "Error logging out ",
+        error: errorMessage,
       });
+
+      toast({
+        position: "top-right",
+        title: "Logout Failed",
+        description: errorMessage, // Shows backend error message
+        type: "error",
+        variant: "destructive",
+      });
+
+      console.error("Logout error:", errorMessage);
     }
   },
-
   checkAuth: async () => {
     set({ isLoading: true, error: null, isCheckingAuth: true });
+
     try {
       const response = await axios.get(`${API_URL}/auth/check-auth`);
+
       set({
         user: response.data.data,
         isLoading: false,
@@ -150,71 +197,101 @@ export const useAuthStore = create((set) => ({
         error: null,
         isCheckingAuth: false,
       });
+
+      // Optional: add a success toast message for authentication check
+      //   console.log("Authentication verified successfully");
     } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "An unexpected error occurred while checking authentication.";
+
       set({
         isLoading: false,
-        error: error.response.data.message || "Error checking auth ",
+        error: errorMessage,
         isCheckingAuth: false,
       });
+
+      console.error("Authentication check error:", errorMessage);
     }
   },
   forgotPasswordApi: async (formData, toast, navigate) => {
     set({ isLoading: true, error: null });
+
     try {
       await axios.post(`${API_URL}/auth/forgot-password`, formData);
+
       set({
         isLoading: false,
         error: null,
       });
+
       toast({
         position: "top-right",
         title: "Password reset link sent successfully",
         type: "success",
       });
+
       navigate("/forgot-password-sent");
     } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "An unexpected error occurred while sending the password reset link.";
+
       set({
         isLoading: false,
-        error:
-          error.response.data.message || "Error sending password reset link ",
+        error: errorMessage,
       });
+
       toast({
         position: "top-right",
-        title: error.response.data.message || "Uh oh! Something went wrong.",
-        description: "There was a problem with your signUp.",
+        title: "Password Reset Failed",
+        description: errorMessage, // Shows backend error message
         type: "error",
         variant: "destructive",
       });
+
+      console.error("Password reset error:", errorMessage);
       throw error;
     }
   },
   resetPasswordApi: async (formData, token, toast, navigate) => {
-    console.log("Reset Password Token:", token);
+    console.log("Reset Password Token:", token); // Helpful for debugging
     set({ isLoading: true, error: null });
+
     try {
       await axios.post(`${API_URL}/auth/reset-password/${token}`, formData);
+
       set({
         isLoading: false,
         error: null,
       });
+
       toast({
         position: "top-right",
         title: "Password reset successfully",
         type: "success",
       });
+
       navigate("/login");
     } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "An unexpected error occurred while resetting the password.";
+
       set({
         isLoading: false,
-        error: error.response.data.message || "Error resetting password ",
+        error: errorMessage,
       });
+
       toast({
         position: "top-right",
-        title: error.response.data.message || "Uh oh! Something went wrong.",
-        description: "There was a problem with your signUp.",
+        title: "Password Reset Failed",
+        description: errorMessage, // Shows backend error message
         type: "error",
         variant: "destructive",
       });
+
+      console.error("Password reset error:", errorMessage);
       throw error;
     }
   },
