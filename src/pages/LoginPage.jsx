@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 // import { useToast } from "@/hooks/use-toast";
-import { toast } from "sonner";
 import { useAuthStore } from "@/store/authStore";
 import { LoginValidateForm } from "@/utils/validation";
 import { Eye, EyeClosed } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,7 +15,7 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
-  // const { toast } = useToast();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const { login } = useAuthStore();
 
