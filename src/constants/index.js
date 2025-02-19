@@ -1,3 +1,7 @@
+import image1 from "../assets/1.jpg";
+import image2 from "../assets/2.jpg";
+import image3 from "../assets/3.jpg";
+
 export const isLoggind = false;
 
 export const user = {
@@ -89,3 +93,5 @@ export const CartProductForTesting = [
     image: "https://picsum.photos/200?random=3",
   },
 ];
+
+export const imagesSider = [image1, image2, image3];

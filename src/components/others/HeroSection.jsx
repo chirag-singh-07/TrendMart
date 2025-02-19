@@ -1,70 +1,73 @@
+// import { imagesSider } from "@/constants";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-// import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/effect-fade";
+import { seasonalData } from "@/constants/seasonalData";
+
+const getCurrentSeason = () => {
+  const month = new Date().getMonth();
+  if (month >= 2 && month <= 4) return "spring";
+  if (month >= 5 && month <= 7) return "summer";
+  if (month >= 8 && month <= 10) return "fall";
+  return "winter";
+};
 
 const HeroSection = () => {
-//   const images = [
-//     "https://placehold.co/1920x1080",
-//     "https://placehold.co/1920x1080",
-//     "https://placehold.co/1920x1080",
-//     "https://placehold.co/1920x1080",
-//   ];
+  const season = getCurrentSeason();
+  const { title, description, images } = seasonalData[season];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDirection(1);
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [images]);
+
   return (
     <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-black text-white flex items-center justify-center">
       <div className="container px-4 md:px-6">
         <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
           <div className="flex flex-col justify-center space-y-4">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                Summer Collection 2025
-              </h1>
-              <p className="max-w-[600px] text-gray-300 md:text-xl">
-                Discover our latest arrivals and elevate your style this summer.
-                Shop now and get 20% off your first purchase.
-              </p>
-            </div>
-            <div className="flex flex-col gap-2 min-[400px]:flex-row">
+            <h1 className="text-3xl font-bold sm:text-5xl xl:text-6xl/none">
+              {title}
+            </h1>
+            <p className="max-w-[600px] text-gray-300 md:text-xl">
+              {description}
+            </p>
+            <div className="flex gap-2">
               <Link
                 href="#"
-                className="inline-flex h-10 items-center justify-center rounded-md bg-white px-8 text-sm font-medium text-black shadow transition-colors hover:bg-gray-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50"
+                className="bg-white text-black px-8 py-2 rounded-md"
               >
                 Shop Now
               </Link>
               <Link
                 href="#"
-                className="inline-flex h-10 items-center justify-center rounded-md border border-gray-200 bg-white px-8 text-sm font-medium shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 text-black"
+                className="border border-white px-8 py-2 rounded-md"
               >
                 Learn More
               </Link>
             </div>
           </div>
-          <div className="relative mx-auto">
-            {/* <Swiper
-              spaceBetween={10} // space between slides
-              slidesPerView={1} // show 1 slide at a time
-              loop={true} // loop through images
-              autoplay={{ delay: 5000 }} // auto slide every 5 seconds
-              effect="fade" // fade effect
-              className="rounded-xl"
-            >
-              {images.map((src, index) => (
-                <SwiperSlide key={index}>
-                  <img
-                    alt={`Hero Image ${index + 1}`}
-                    className="w-full h-auto object-cover object-center rounded-xl"
-                    src={src}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper> */}
-            <img
-              alt="Hero Image"
-              className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
-              height="550"
-              src="https://placehold.co/1920x1080"
-              width="550"
-            />
+          <div className="relative flex justify-center overflow-hidden w-full aspect-video">
+            <AnimatePresence initial={false} custom={direction}>
+              <motion.img
+                key={currentIndex}
+                src={images[currentIndex]}
+                alt="Seasonal Collection"
+                className="absolute w-full h-full object-cover rounded-xl"
+                initial={{ x: "100%", opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: "-100%", opacity: 0 }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+              />
+            </AnimatePresence>
           </div>
         </div>
       </div>
