@@ -1,3 +1,4 @@
+import { categorys } from "@/constants";
 import { Link } from "react-router-dom";
 
 const FeaturedCategories = () => {
@@ -8,24 +9,25 @@ const FeaturedCategories = () => {
           Featured Categories
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {["Women's Fashion", "Men's Clothing", "Accessories", "Footwear"].map(
-            (category) => (
+          {categorys.map(
+            (category,i) => (
               <Link
-                key={category}
+                key={i}
                 href="#"
                 className="group relative overflow-hidden rounded-lg shadow-lg"
               >
                 <img
-                  alt={category}
+                  alt={category.name}
                   className="object-cover w-full h-60 transition-transform group-hover:scale-105"
                   height="240"
                   //   src="/placeholder.svg?height=240&width=360"
-                  src="https://placehold.co/240x360"
+                  // src="https://placehold.co/240x360"
+                  src={category.image}
                   width="360"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-50 transition-opacity group-hover:bg-opacity-75" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <h3 className="text-2xl font-bold text-white">{category}</h3>
+                  <h3 className="text-2xl font-bold text-white">{category.name}</h3>
                 </div>
               </Link>
             )

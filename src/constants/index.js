@@ -2,6 +2,7 @@ import image1 from "../assets/1.jpg";
 import image2 from "../assets/2.jpg";
 import image3 from "../assets/3.jpg";
 
+
 export const isLoggind = false;
 
 export const user = {
@@ -95,3 +96,22 @@ export const CartProductForTesting = [
 ];
 
 export const imagesSider = [image1, image2, image3];
+
+export const categorys = [
+  {
+    name: "Women's Fashion",
+    image: "/women.jpeg",
+  },
+  {
+    name: "Men's Clothing",
+    image: "men.jpeg",
+  },
+  {
+    name: "Accessories",
+    image: "/access.jpeg",
+  },
+  {
+    name: "Footwear",
+    image: "/footwear.jpeg",
+  },
+];

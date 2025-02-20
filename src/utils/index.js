@@ -9,14 +9,15 @@ export const navLinks = [
     path: "/collections",
     lebel: "Womens",
   },
-  {
-    name: "Kids",
-    path: "/collections",
-    lebel: "Kids",
-  },
+
   {
     name: "Accessories",
     path: "/collections",
     lebel: "Accessories",
+  },
+  {
+    name: "Footwear",
+    path: "/collections",
+    lebel: "Footwear",
   },
 ];
