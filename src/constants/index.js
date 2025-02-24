@@ -2,7 +2,6 @@ import image1 from "../assets/1.jpg";
 import image2 from "../assets/2.jpg";
 import image3 from "../assets/3.jpg";
 
-
 export const isLoggind = false;
 
 export const user = {
@@ -115,3 +114,31 @@ export const categorys = [
     image: "/footwear.jpeg",
   },
 ];
+
+export const selectedProduct = {
+  name: "Product Name",
+  price: 100,
+  salePrice: 80,
+  description: "This is a product description.",
+  images: [
+    {
+      url: "https://picsum.photos/200",
+      alt: "Product Image 1",
+    },
+    {
+      url: "https://picsum.photos/200",
+      alt: "Product Image 2",
+    },
+    {
+      url: "https://picsum.photos/200",
+      alt: "Product Image 3",
+    },
+  ],
+  sizes: ["S", "M", "L", "XL"],
+  colors: ["Red", "Blue", "Green"],
+  category: "Women's Fashion",
+  brand: "Brand Name",
+  stock: 10,
+  material: "Leather",
+  avgReviews: 5,
+};

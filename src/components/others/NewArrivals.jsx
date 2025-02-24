@@ -1,4 +1,5 @@
-import ProductCard from "./ProductCard";
+// import { product } from "@/constants/filters";
+import ProductCard from "../common/ProductCard";
 
 const NewArrivals = () => {
   return (
@@ -9,7 +10,8 @@ const NewArrivals = () => {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map((item, i) => (
-            <ProductCard key={i} title={"Product Name"} price={"99.99"} />
+            // <ProductCard key={i} product={product} />
+            <ProductCard key={i}  />
           ))}
         </div>
       </div>

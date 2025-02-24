@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { DropdownMenuLabel } from "@radix-ui/react-dropdown-menu";
-import SearchBar from "./SearchBar";
+// import SearchBar from "./SearchBar";
 import Sidebar from "./Sidebar";
 import { Sheet, SheetTrigger } from "../ui/sheet";
 import { useState } from "react";
@@ -55,7 +55,13 @@ const Navbar = () => {
             <div className="flex gap-4 items-center">
               {/* <Search className="size-7" /> */}
               <div className="overflow-hidden cursor-pointer">
-                <SearchBar />
+                {/* <SearchBar /> */}
+                <Link
+                  to="/wishlist"
+                  className="w-full  ml-2 flex text-lg gap-2"
+                >
+                  <Heart />
+                </Link>
               </div>
               <CartDrawer />
               <DropdownMenu className="w-96">

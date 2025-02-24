@@ -1,0 +1,7 @@
+// import { selectedProduct } from "@/constants";
+
+const ProductDetails = () => {
+  return <div></div>;
+};
+
+export default ProductDetails;
