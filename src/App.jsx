@@ -22,7 +22,7 @@ import DataProtectionPolicyPage from "./pages/DataProtectionPolicyPage";
 import DetailLayout from "./layout/DetailLayout";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
-import Loader from "./components/others/Loader";
+import Loader from "../../frontend-sellers/src/components/others/Loader";
 import ForgotPasswordSentPage from "./pages/ForgotPasswordSentPage";
 
 const App = () => {
