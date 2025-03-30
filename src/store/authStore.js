@@ -2,7 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 
 const API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:8000/api/user";
+  import.meta.env.VITE_API_URL_1 || "http://localhost:8000/api/user";
 
 axios.defaults.withCredentials = true;
 

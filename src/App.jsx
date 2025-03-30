@@ -24,6 +24,7 @@ import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
 import Loader from "../../frontend-sellers/src/components/others/Loader";
 import ForgotPasswordSentPage from "./pages/ForgotPasswordSentPage";
+import ProductDetailsPage from "./pages/ProductDetailsPage";
 
 const App = () => {
   // const isLogged = true;
@@ -52,6 +53,7 @@ const App = () => {
           <Route path="wishlist" element={<Wishlish />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="collections" element={<CollectionPage />} />
+          <Route path="product/:id" element={<ProductDetailsPage />} />
         </Route>
       </Route>
 
