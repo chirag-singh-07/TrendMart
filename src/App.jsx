@@ -22,9 +22,10 @@ import DataProtectionPolicyPage from "./pages/DataProtectionPolicyPage";
 import DetailLayout from "./layout/DetailLayout";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
-import Loader from "../../frontend-sellers/src/components/others/Loader";
+
 import ForgotPasswordSentPage from "./pages/ForgotPasswordSentPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
+import { Loader2 } from "lucide-react";
 
 const App = () => {
   // const isLogged = true;
@@ -36,7 +37,11 @@ const App = () => {
 
   if (isCheckingAuth) {
     // return <LoadingSpinComponent/>;
-    return <Loader />;
+    return (
+      <div className="h-screen w-full flex items-center justify-center">
+        <Loader2 className="h-16 w-16 animate-spin" />
+      </div>
+    );
   }
 
   return (
