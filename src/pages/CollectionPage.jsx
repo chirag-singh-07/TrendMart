@@ -70,6 +70,12 @@ const CollectionPage = () => {
     navigate(`/product/${productId}`); // Navigate to product details page
   };
 
+  // const handleAddToCart = (getProcudId) => {
+  //   // Add product to cart with productId
+  //   // Navigate to cart page
+  //   console.log("prod", getProcudId);
+  // };
+
   useEffect(() => {
     const storedFilters = sessionStorage.getItem("filters");
     if (storedFilters) {

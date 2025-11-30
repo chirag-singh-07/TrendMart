@@ -26,7 +26,7 @@ const SpecialOffers = () => {
     return () => clearInterval(interval);
   }, [images]);
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-100 flex items-center justify-center">
+    <section className="w-full py-12 md:py-24 lg:py-32 bg-black flex items-center justify-center text-white">
       <div className="container px-4 md:px-6">
         <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">
           Special Offers
@@ -60,7 +60,7 @@ const SpecialOffers = () => {
                 {/* Summer Sale */}
                 {title}
               </h3>
-              <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+              <p className="max-w-[600px]  md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 {/* Get up to 50% off on selected items. Limited time offer, don't
                 miss out! */}
                 {description}
@@ -69,7 +69,7 @@ const SpecialOffers = () => {
             <div className="flex flex-col gap-2 min-[400px]:flex-row">
               <Link
                 href="#"
-                className="inline-flex h-10 items-center justify-center rounded-md bg-black px-8 text-sm font-medium text-white shadow transition-colors hover:bg-gray-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50"
+                className="inline-flex h-10 items-center justify-center rounded-md bg-white px-8 text-sm font-medium text-black shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50"
               >
                 Shop Now
               </Link>

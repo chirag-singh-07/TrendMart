@@ -9,6 +9,9 @@ export const useProductStore = create((set) => ({
   isLoading: false,
   error: null,
   productDetails: null,
+  featureProducts: [],
+  TrendingProducts: [],
+  BestSellerProducts: [],
 
   fetchProducts: async ({ filterParams, sortParams }) => {
     // console.log("ok", filterParams);
@@ -35,6 +38,43 @@ export const useProductStore = create((set) => ({
     try {
       const response = await axios.get(`${API_URL}/admin/product/${productId}`);
       set({ productDetails: response.data.data, isLoading: false });
+    } catch (error) {
+      set({ error: error.message, isLoading: false });
+      // Handle error
+      console.error("Fetch product details error:", error.message);
+    }
+  },
+  fetchFeatureProducts: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.get(
+        `${API_URL}/user/product/feature-products`
+      );
+      // console.log("featureProducts", response.data.data);
+      set({ featureProducts: response.data.data, isLoading: false });
+    } catch (error) {
+      set({ error: error.message, isLoading: false });
+      // Handle error
+      console.error("Fetch feature products error:", error.message);
+    }
+  },
+  fetchTrendingProducts: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.get(
+        `${API_URL}/user/product/trending-products`
+      );
+      set({ TrendingProducts: response.data.data, isLoading: false });
+    } catch (error) {
+      set({ error: error.message, isLoading: false });
+    }
+  },
+  fetchBestSellerProducts: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.get(`${API_URL}/user/product/best-sellers`);
+      // console.log("BestSellerProducts", response.data.data);
+      set({ BestSellerProducts: response.data.data, isLoading: false });
     } catch (error) {
       set({ error: error.message, isLoading: false });
     }
