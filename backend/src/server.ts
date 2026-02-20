@@ -13,6 +13,8 @@ import uploadRouter from "./upload/routes/upload.routes.js";
 import categoryRouter from "./product/routes/category.routes.js";
 import productRouter from "./product/routes/product.routes.js";
 import variantRouter from "./product/routes/variant.routes.js";
+import cartRouter from "./cart/routes/cart.routes.js";
+import wishlistRouter from "./cart/routes/wishlist.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { uploadConfig } from "./upload/config/upload.config.js";
 import { ensureDirectoryExists } from "./upload/utils/fileHelper.util.js";
@@ -50,6 +52,8 @@ app.use("/api/upload", uploadRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/products", productRouter);
 app.use("/api/products/:productId/variants", variantRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/wishlist", wishlistRouter);
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
 
@@ -72,6 +76,15 @@ const start = async () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     console.log(`📌 Auth endpoints: http://localhost:${PORT}/api/auth`);
     console.log(`📌 Upload endpoints: http://localhost:${PORT}/api/upload`);
+    console.log(
+      `📌 Category endpoints: http://localhost:${PORT}/api/categories`,
+    );
+    console.log(`📌 Product endpoints: http://localhost:${PORT}/api/products`);
+    console.log(
+      `📌 Variant endpoints: http://localhost:${PORT}/api/products/:productId/variants`,
+    );
+    console.log(`📌 Cart endpoints: http://localhost:${PORT}/api/cart`);
+    console.log(`📌 Wishlist endpoints: http://localhost:${PORT}/api/wishlist`);
 
     // Initialize upload directories
     Object.values(uploadConfig.folders).forEach((folder) => {
