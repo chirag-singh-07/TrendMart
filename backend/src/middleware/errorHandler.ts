@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { AppError } from "../auth/utils/AppError.js";
+import { AppError } from "../utils/AppError.js";
 import { ZodError } from "zod";
 
 /**

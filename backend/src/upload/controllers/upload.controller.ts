@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { uploadService } from "../services/upload.service.js";
-import { AppError } from "../../auth/utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 
 /**
  * Standard success response helper

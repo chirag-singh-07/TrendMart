@@ -3,7 +3,7 @@
  * Throw this anywhere in the service layer — the centralized error
  * handler in the controller will catch it and respond correctly.
  */
-export class AppError extends Error {
+class AppError extends Error {
   public readonly statusCode: number;
   public readonly isOperational: boolean;
 
@@ -15,3 +15,5 @@ export class AppError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
 }
+
+export default AppError;

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import User from "../../models/User.model.js";
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 import { hashPassword, comparePassword } from "../utils/password.util.js";
 import {
   signAccessToken,

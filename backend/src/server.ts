@@ -10,6 +10,9 @@ import { validateEnv } from "./config/env.validator.js";
 import connectDB from "./config/database.js";
 import authRouter from "./auth/routes/auth.routes.js";
 import uploadRouter from "./upload/routes/upload.routes.js";
+import categoryRouter from "./product/routes/category.routes.js";
+import productRouter from "./product/routes/product.routes.js";
+import variantRouter from "./product/routes/variant.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { uploadConfig } from "./upload/config/upload.config.js";
 import { ensureDirectoryExists } from "./upload/utils/fileHelper.util.js";
@@ -44,6 +47,9 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/upload", uploadRouter);
+app.use("/api/categories", categoryRouter);
+app.use("/api/products", productRouter);
+app.use("/api/products/:productId/variants", variantRouter);
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
 

@@ -1,5 +1,5 @@
 import mongoose, { Schema, model } from "mongoose";
-import { IProductVariant } from "../interfaces";
+import { IProductVariant } from "../../interfaces";
 
 // ==================== ProductVariant Model ====================
 

@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 
 // ── Transporter ───────────────────────────────────────────────────────────────
 

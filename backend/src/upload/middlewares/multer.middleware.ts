@@ -2,7 +2,7 @@ import multer, { FileFilterCallback } from "multer";
 import { Request } from "express";
 import { uploadConfig } from "../config/upload.config.js";
 import { FolderKey } from "../types/upload.types.js";
-import { AppError } from "../../auth/utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 
 // Use memoryStorage as we process images through Sharp before saving
 const storage = multer.memoryStorage();

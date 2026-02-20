@@ -15,7 +15,7 @@ import {
   changePasswordSchema,
   resendOtpSchema,
 } from "../validators/auth.validator.js";
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 import type { AuthenticatedRequest } from "../types/auth.types.js";
 
 // ── Shared helpers ────────────────────────────────────────────────────────────

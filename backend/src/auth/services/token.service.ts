@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 import { ITokenPayload, IRefreshTokenEntry } from "../types/auth.types.js";
 
 // ── Environment variable helpers ─────────────────────────────────────────────

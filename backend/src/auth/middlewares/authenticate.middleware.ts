@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../services/token.service.js";
 import { getRedisClient } from "../../config/redis.js";
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 import type { AuthenticatedRequest } from "../types/auth.types.js";
 
 /**
