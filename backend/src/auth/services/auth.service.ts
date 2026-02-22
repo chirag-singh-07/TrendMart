@@ -270,11 +270,13 @@ export const refreshTokens = async (
     userId: user._id.toString(),
     role: user.role as Role,
     email: user.email,
+    deviceId: payload.deviceId,
   });
 
   const newRefreshToken = signRefreshToken({
     userId: user._id.toString(),
     tokenVersion: 1,
+    deviceId: payload.deviceId,
   });
 
   // Rotate: remove old, add new

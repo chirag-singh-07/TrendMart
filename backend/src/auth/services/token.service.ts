@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { AppError } from "../../utils/AppError.js";
-import { ITokenPayload, IRefreshTokenEntry } from "../types/auth.types.js";
+import { ITokenPayload, RefreshTokenPayload } from "../types/auth.types.js";
 
 // ── Environment variable helpers ─────────────────────────────────────────────
 
@@ -22,7 +22,7 @@ const getRefreshSecret = (): string => {
 
 /**
  * Signs a short-lived access token (15 minutes).
- * Payload: { userId, role, email }
+ * Payload: { userId, role, email, deviceId? }
  */
 export const signAccessToken = (payload: ITokenPayload): string => {
   return jwt.sign(payload, getAccessSecret(), {
@@ -66,9 +66,9 @@ export const decodeAccessToken = (token: string): ITokenPayload | null => {
 
 /**
  * Signs a long-lived refresh token (7 days).
- * Payload: { userId, tokenVersion }
+ * Payload: { userId, tokenVersion, deviceId? }
  */
-export const signRefreshToken = (payload: IRefreshTokenEntry): string => {
+export const signRefreshToken = (payload: RefreshTokenPayload): string => {
   return jwt.sign(payload, getRefreshSecret(), {
     expiresIn: "7d",
     issuer: "ecoom-api",
@@ -79,11 +79,11 @@ export const signRefreshToken = (payload: IRefreshTokenEntry): string => {
  * Verifies and decodes a refresh token.
  * Throws AppError(401) on invalid/expired tokens.
  */
-export const verifyRefreshToken = (token: string): IRefreshTokenEntry => {
+export const verifyRefreshToken = (token: string): RefreshTokenPayload => {
   try {
     return jwt.verify(token, getRefreshSecret(), {
       issuer: "ecoom-api",
-    }) as IRefreshTokenEntry;
+    }) as RefreshTokenPayload;
   } catch (err) {
     if (err instanceof jwt.TokenExpiredError) {
       throw new AppError(

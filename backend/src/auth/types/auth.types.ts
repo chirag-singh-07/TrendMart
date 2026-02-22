@@ -13,7 +13,7 @@ export interface ITokenPayload {
   userId: string;
   role: Role;
   email: string;
-  deviceId: string; // ties token to a specific device session
+  deviceId?: string; // made optional to allow login without explicit device tracking
 }
 
 export interface IRefreshTokenEntry {
@@ -60,6 +60,7 @@ export interface AccessTokenPayload {
 export interface RefreshTokenPayload {
   userId: string;
   tokenVersion: number;
+  deviceId?: string;
 }
 
 export interface DecodedToken {
@@ -94,10 +95,7 @@ export interface TokenGenerationResult {
   refreshTokenExpiry: Date;
 }
 
-export interface OtpType {
-  verify: "verify";
-  reset: "reset";
-}
+export type OtpType = "verify" | "reset";
 
 export interface AuthenticatedRequest extends express.Request {
   user?: ITokenPayload;
