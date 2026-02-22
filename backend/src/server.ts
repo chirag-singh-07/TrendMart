@@ -23,6 +23,13 @@ import {
   adminCouponRoutes,
 } from "./coupon/routes/coupon.routes.js";
 import couponUsageRouter from "./coupon/routes/couponUsage.routes.js";
+import reviewRouter from "./review/routes/review.routes.js";
+import adminReviewRouter from "./review/routes/adminReview.routes.js";
+import paymentRouter from "./payment/routes/payment.routes.js";
+import walletRouter from "./payment/routes/wallet.routes.js";
+import payoutRouter from "./payment/routes/payout.routes.js";
+import refundRouter from "./payment/routes/refund.routes.js";
+import webhookRouter from "./payment/routes/webhook.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { uploadConfig } from "./upload/config/upload.config.js";
 import { ensureDirectoryExists } from "./upload/utils/fileHelper.util.js";
@@ -43,6 +50,9 @@ app.use(
     credentials: true, // required for cookies to work cross-origin
   }),
 );
+
+// Webhook route MUST be before body parser
+app.use("/api/webhook", webhookRouter);
 
 app.use(express.json({ limit: "10kb" })); // prevent large payload attacks
 app.use(express.urlencoded({ extended: true }));
@@ -70,6 +80,12 @@ app.use("/api/admin/orders", adminOrderRouter);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/coupons/me", couponUsageRouter);
 app.use("/api/admin/coupons", adminCouponRoutes);
+app.use("/api/reviews", reviewRouter);
+app.use("/api/admin/reviews", adminReviewRouter);
+app.use("/api/payments", paymentRouter);
+app.use("/api/wallet", walletRouter);
+app.use("/api/payouts", payoutRouter);
+app.use("/api/refunds", refundRouter);
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
 
@@ -122,6 +138,21 @@ const start = async () => {
     );
     console.log(
       `📌 Admin Coupon endpoints: http://${BACKEND_URL}:${PORT}/api/admin/coupons`,
+    );
+    console.log(
+      `📌 Payment endpoints: http://${BACKEND_URL}:${PORT}/api/payments`,
+    );
+    console.log(
+      `📌 Wallet endpoints: http://${BACKEND_URL}:${PORT}/api/wallet`,
+    );
+    console.log(
+      `📌 Payout endpoints: http://${BACKEND_URL}:${PORT}/api/payouts`,
+    );
+    console.log(
+      `📌 Refund endpoints: http://${BACKEND_URL}:${PORT}/api/refunds`,
+    );
+    console.log(
+      `📌 Stripe Webhook: http://${BACKEND_URL}:${PORT}/api/webhook/stripe`,
     );
 
     // Initialize upload directories

@@ -58,7 +58,6 @@ OrderItemSchema.index({ sellerId: 1 });
 // check if a user purchased a specific product (for verified review)
 OrderItemSchema.index({ productId: 1, sellerId: 1 });
 
-export const OrderItem = model<IOrderItemDocument>(
-  "OrderItem",
-  OrderItemSchema,
-);
+const OrderItem = model<IOrderItemDocument>("OrderItem", OrderItemSchema);
+
+export default OrderItem;
