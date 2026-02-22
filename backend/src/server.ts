@@ -40,7 +40,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost";
 
 // ── Global middleware ─────────────────────────────────────────────────────────
 
