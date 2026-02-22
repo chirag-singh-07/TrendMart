@@ -23,18 +23,21 @@ const categories = [
 
 const CategoryRow: React.FC = () => {
   return (
-    <div className="w-full bg-white border-b border-[#e0e0e0]">
-      <div className="container mx-auto px-4 py-6 overflow-x-auto">
-        <div className="flex justify-between md:justify-center items-center gap-8 md:gap-16 min-w-max">
+    <div className="w-full bg-background border-b border-border/40 py-10">
+      <div className="container mx-auto px-4 overflow-x-auto scrollbar-hide">
+        <div className="flex justify-between md:justify-center items-center gap-10 md:gap-20 min-w-max px-4">
           {categories.map((cat) => (
             <div
               key={cat.name}
-              className="group flex flex-col items-center gap-2 cursor-pointer"
+              className="group flex flex-col items-center gap-4 cursor-pointer"
             >
-              <div className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center bg-black rounded-full border-2 border-transparent transition-all group-hover:ring-2 group-hover:ring-black group-hover:ring-offset-2">
-                <cat.icon size={28} className="text-white" />
+              <div className="w-20 h-20 md:w-24 md:h-24 flex items-center justify-center bg-card rounded-[2.5rem] shadow-premium hover:shadow-premium-hover border border-border/50 group-hover:border-primary/30 group-hover:-translate-y-2 transition-all duration-500">
+                <cat.icon
+                  size={36}
+                  className="text-foreground group-hover:text-primary transition-colors"
+                />
               </div>
-              <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-black group-hover:opacity-60 transition-opacity">
+              <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-all">
                 {cat.name}
               </span>
             </div>
