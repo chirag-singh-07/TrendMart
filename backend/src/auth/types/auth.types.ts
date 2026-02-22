@@ -1,7 +1,13 @@
 import express from "express";
 import mongoose from "mongoose";
 
-export type Role = "buyer" | "seller" | "admin" | "delivery_partner";
+export type Role =
+  | "buyer"
+  | "seller"
+  | "admin"
+  | "delivery"
+  | "distributor"
+  | "developer";
 
 export interface ITokenPayload {
   userId: string;
@@ -91,4 +97,9 @@ export interface TokenGenerationResult {
 export interface OtpType {
   verify: "verify";
   reset: "reset";
+}
+
+export interface AuthenticatedRequest extends express.Request {
+  user?: ITokenPayload;
+  deviceInfo?: IDeviceInfo;
 }

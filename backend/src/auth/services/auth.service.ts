@@ -26,6 +26,7 @@ import type {
   ChangePasswordInput,
   ResendOtpInput,
 } from "../validators/auth.validator.js";
+import { Role } from "../types/auth.types.js";
 
 // ── Redis blacklist key ───────────────────────────────────────────────────────
 
@@ -199,7 +200,7 @@ export const login = async (input: LoginInput): Promise<LoginResult> => {
 
   const accessToken = signAccessToken({
     userId: user._id.toString(),
-    role: user.role as "buyer" | "seller" | "admin",
+    role: user.role as Role,
     email: user.email,
   });
 
@@ -267,7 +268,7 @@ export const refreshTokens = async (
 
   const newAccessToken = signAccessToken({
     userId: user._id.toString(),
-    role: user.role as "buyer" | "seller" | "admin",
+    role: user.role as Role,
     email: user.email,
   });
 

@@ -30,6 +30,10 @@ import walletRouter from "./payment/routes/wallet.routes.js";
 import payoutRouter from "./payment/routes/payout.routes.js";
 import refundRouter from "./payment/routes/refund.routes.js";
 import webhookRouter from "./payment/routes/webhook.routes.js";
+import addressRouter from "./delivery/routes/address.routes.js";
+import shipmentRouter from "./delivery/routes/shipment.routes.js";
+import trackingRouter from "./delivery/routes/tracking.routes.js";
+import deliveryPartnerRouter from "./delivery/routes/deliveryPartner.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { uploadConfig } from "./upload/config/upload.config.js";
 import { ensureDirectoryExists } from "./upload/utils/fileHelper.util.js";
@@ -86,6 +90,10 @@ app.use("/api/payments", paymentRouter);
 app.use("/api/wallet", walletRouter);
 app.use("/api/payouts", payoutRouter);
 app.use("/api/refunds", refundRouter);
+app.use("/api/addresses", addressRouter);
+app.use("/api/shipments", shipmentRouter);
+app.use("/api/track", trackingRouter);
+app.use("/api/delivery-partners", deliveryPartnerRouter);
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
 
@@ -153,6 +161,16 @@ const start = async () => {
     );
     console.log(
       `📌 Stripe Webhook: http://${BACKEND_URL}:${PORT}/api/webhook/stripe`,
+    );
+    console.log(
+      `📌 Address endpoints: http://${BACKEND_URL}:${PORT}/api/addresses`,
+    );
+    console.log(
+      `📌 Shipment endpoints: http://${BACKEND_URL}:${PORT}/api/shipments`,
+    );
+    console.log(`📌 Tracking: http://${BACKEND_URL}:${PORT}/api/track`);
+    console.log(
+      `📌 Delivery Partners: http://${BACKEND_URL}:${PORT}/api/delivery-partners`,
     );
 
     // Initialize upload directories
