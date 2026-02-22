@@ -9,7 +9,9 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "mongodb-start-local": "C:\\Program Files\\MongoDB\\Server\\8.2\\bin\\mongod.exe --dbpath=\"C:\\data\\db\"",
+    "mongodb-stop-local": "taskkill /F /IM mongod.exe"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -27,6 +29,7 @@
     "mongoose": "^9.2.1",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
+    "nodemailer": "^8.0.1",
     "sharp": "^0.34.5",
     "slugify": "^1.6.6",
     "stripe": "^20.3.1",
@@ -50,6 +53,7 @@
     "@types/ua-parser-js": "^0.7.39",
     "@types/uuid": "^10.0.0",
     "cross-env": "^10.1.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }

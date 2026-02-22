@@ -1,0 +1,10 @@
+TO start the backend:
+1. Open two terminal
+2. In first terminal run: npm run mongodb-start-local
+3. In second terminal run: npm run dev
+
+
+mongodb local start command 
+
+"C:\Program Files\MongoDB\Server\8.2\bin\mongod.exe" --dbpath="C:\data\db"
+

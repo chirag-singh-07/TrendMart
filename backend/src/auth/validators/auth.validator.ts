@@ -33,7 +33,6 @@ export const registerSchema = z.object({
       .regex(/^\+?[1-9]\d{7,14}$/, "Please provide a valid phone number")
       .optional(),
     role: z.enum(["buyer", "seller"], {
-      error: "Role is required",
       message: "Role must be either 'buyer' or 'seller'",
     }),
   }),
@@ -110,7 +109,7 @@ export const changePasswordSchema = z.object({
       .string({ error: "Current password is required" })
       .min(1, "Current password cannot be empty"),
     newPassword: z
-      .string({ error: "New password is required" })
+      .string({ message: "New password is required" })
       .min(8, "Password must be at least 8 characters")
       .max(72, "Password must be at most 72 characters")
       .regex(
@@ -128,7 +127,6 @@ export const resendOtpSchema = z.object({
       .string({ error: "User ID is required" })
       .min(1, "User ID cannot be empty"),
     type: z.enum(["verify", "reset"], {
-      error: "OTP type is required",
       message: "OTP type must be either 'verify' or 'reset'",
     }),
   }),

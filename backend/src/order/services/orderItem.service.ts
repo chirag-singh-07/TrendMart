@@ -1,4 +1,4 @@
-import { OrderItem } from "../../models/OrderItem.model.js";
+import OrderItem from "../../models/OrderItem.model.js";
 import AppError from "../../utils/AppError.js";
 
 /**

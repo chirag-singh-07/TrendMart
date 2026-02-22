@@ -11,7 +11,7 @@ import {
   IProduct,
 } from "../../interfaces/index.js";
 import Order from "../../models/Order.model.js";
-import { OrderItem } from "../../models/OrderItem.model.js";
+import OrderItem from "../../models/OrderItem.model.js";
 import Address from "../../models/Address.model.js";
 import Coupon from "../../models/Coupon.model.js";
 import CouponUsage from "../../models/CouponUsage.model.js";

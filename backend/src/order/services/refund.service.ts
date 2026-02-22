@@ -3,7 +3,7 @@ import {
   IPaginatedResult,
 } from "../types/order.types.js";
 import Order from "../../models/Order.model.js";
-import { OrderItem } from "../../models/OrderItem.model.js";
+import OrderItem from "../../models/OrderItem.model.js";
 import { productService } from "../../product/services/product.service.js";
 import AppError from "../../utils/AppError.js";
 
