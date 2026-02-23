@@ -1,6 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Search, Heart, ShoppingCart, User, Menu } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Search,
+  Heart,
+  ShoppingCart,
+  User,
+  Menu,
+  LogOut,
+  Package,
+  UserCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,130 +19,265 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useAuthStore } from "@/store/authStore";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar: React.FC = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuthStore();
+
+  const handleLogout = async () => {
+    await logout(navigate);
+  };
+
   return (
-    <nav className="sticky top-0 z-50 w-full glass border-b border-border/40 backdrop-blur-xl">
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-8">
+    <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-zinc-100">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-6">
         {/* Left: Logo */}
         <div className="flex-shrink-0">
           <Link
             to="/"
-            className="text-3xl font-black tracking-tighter text-foreground group"
+            className="text-2xl font-black tracking-tighter text-black uppercase italic flex items-center gap-2 group"
           >
-            TREND
-            <span className="text-primary group-hover:text-foreground transition-colors">
-              MART
-            </span>
+            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-black text-lg transition-transform group-hover:rotate-12">
+              T
+            </div>
+            TrendMart
           </Link>
         </div>
 
         {/* Center: Search Bar */}
-        <div className="hidden md:flex flex-grow max-w-2xl items-center relative group">
-          <div className="absolute left-4 z-10 text-muted-foreground group-focus-within:text-foreground transition-colors pointer-events-none">
-            <Search size={18} />
-          </div>
-          <Input
-            placeholder="Search for products, brands and more..."
-            className="h-12 pl-12 pr-28 rounded-2xl bg-muted/50 border-none focus-visible:ring-primary/20 focus-visible:bg-white transition-all outline-none text-sm"
+        <div className="hidden md:flex flex-grow max-w-xl items-center relative group">
+          <Search
+            className="absolute left-4 z-10 text-zinc-400 group-focus-within:text-black transition-colors"
+            size={16}
           />
-          <Button
-            size="sm"
-            className="absolute right-1.5 h-9 px-6 bg-foreground text-background rounded-xl font-semibold text-xs hover:bg-foreground/90 transition-all border-none"
-          >
-            Search
-          </Button>
+          <Input
+            placeholder="DISCOVER THE COLLECTION..."
+            className="h-10 pl-11 pr-4 rounded-xl bg-zinc-50 border-zinc-100 focus-visible:ring-black/5 focus-visible:bg-white focus-visible:border-zinc-200 transition-all text-[10px] font-bold uppercase tracking-widest placeholder:text-zinc-400"
+          />
         </div>
 
-        {/* Right: Icons */}
+        {/* Right: Actions */}
         <div className="flex items-center gap-2">
           <div className="hidden lg:flex items-center gap-1">
             <Button
               variant="ghost"
-              size="icon-lg"
-              className="rounded-xl text-muted-foreground hover:text-foreground relative group"
-            >
-              <Heart size={22} />
-              <div className="absolute top-12 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-                Wishlist
-              </div>
-            </Button>
-            <Button
-              variant="ghost"
               size="icon"
-              className="rounded-xl text-muted-foreground hover:text-foreground relative group h-10 w-10 flex items-center justify-center"
-              asChild
+              className="rounded-xl text-zinc-400 hover:text-black hover:bg-zinc-50 transition-all"
             >
-              <Link to="/login">
-                <User size={22} />
-                <div className="absolute top-12 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-                  Account
-                </div>
-              </Link>
+              <Heart size={20} />
             </Button>
+
+            <div className="h-4 w-[1px] bg-zinc-100 mx-2" />
+
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="rounded-xl px-3 gap-2 hover:bg-zinc-50 transition-all group"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center overflow-hidden border border-zinc-200 group-hover:border-zinc-400 transition-colors">
+                      {user?.avatar ? (
+                        <img
+                          src={user.avatar}
+                          alt={user.firstName}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <UserCircle size={18} className="text-zinc-600" />
+                      )}
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600 group-hover:text-black transition-colors">
+                      {user?.firstName}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-56 rounded-2xl p-2 border-zinc-100 shadow-xl bg-white"
+                >
+                  <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest opacity-40 px-3 py-2">
+                    Profile Portal
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-zinc-50" />
+                  <DropdownMenuItem className="rounded-xl px-3 py-2.5 cursor-pointer hover:bg-zinc-50 transition-all group">
+                    <UserCircle
+                      size={16}
+                      className="mr-3 text-zinc-400 group-hover:text-black transition-colors"
+                    />
+                    <span className="text-[10px] font-bold uppercase tracking-widest">
+                      Dashboard
+                    </span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="rounded-xl px-3 py-2.5 cursor-pointer hover:bg-zinc-50 transition-all group">
+                    <Package
+                      size={16}
+                      className="mr-3 text-zinc-400 group-hover:text-black transition-colors"
+                    />
+                    <span className="text-[10px] font-bold uppercase tracking-widest">
+                      Order History
+                    </span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-zinc-50" />
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="rounded-xl px-3 py-2.5 cursor-pointer hover:bg-red-50 transition-all group text-red-600"
+                  >
+                    <LogOut
+                      size={16}
+                      className="mr-3 opacity-60 group-hover:opacity-100 transition-opacity"
+                    />
+                    <span className="text-[10px] font-black uppercase tracking-widest">
+                      Terminate Session
+                    </span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  className="rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-zinc-50"
+                  asChild
+                >
+                  <Link to="/login">Sign In</Link>
+                </Button>
+                <Button
+                  className="rounded-xl bg-black text-white px-5 text-[10px] font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-lg hover:shadow-black/10"
+                  asChild
+                >
+                  <Link to="/register">Register</Link>
+                </Button>
+              </div>
+            )}
           </div>
+
+          <div className="h-4 w-[1px] bg-zinc-100 mx-1 hidden lg:block" />
+
           <Button
-            size="icon-lg"
-            className="relative rounded-xl bg-foreground text-background hover:scale-105 transition-all shadow-md"
+            size="icon"
+            className="relative rounded-xl bg-black text-white hover:bg-zinc-800 transition-all shadow-lg hover:shadow-black/20"
           >
-            <ShoppingCart size={22} />
-            <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-background">
-              2
+            <ShoppingCart size={20} />
+            <span className="absolute -top-1 -right-1 bg-white text-black text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-zinc-100">
+              0
             </span>
           </Button>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile Menu */}
           <Sheet>
             <SheetTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="md:hidden rounded-xl hover:bg-muted"
+                className="lg:hidden rounded-xl bg-zinc-50 border border-zinc-100"
               >
-                <Menu size={24} />
+                <Menu size={20} />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="glass backdrop-blur-xl">
-              <SheetHeader>
-                <SheetTitle className="text-left font-black tracking-tighter text-2xl">
-                  TRENDMART
+            <SheetContent
+              side="right"
+              className="w-[300px] rounded-l-3xl p-6 border-zinc-100 bg-white shadow-2xl overflow-y-auto"
+            >
+              <SheetHeader className="mb-8">
+                <SheetTitle className="text-left font-black tracking-tighter text-2xl uppercase italic flex items-center gap-2">
+                  <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-black text-lg">
+                    T
+                  </div>
+                  TrendMart
                 </SheetTitle>
               </SheetHeader>
-              <div className="mt-8 flex flex-col gap-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <Button
-                    variant="secondary"
-                    className="flex flex-col items-center gap-2 h-auto p-4 rounded-2xl bg-muted hover:bg-muted/80"
-                  >
-                    <Heart size={24} className="text-foreground" />
-                    <span className="text-xs font-semibold">Wishlist</span>
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    className="flex flex-col items-center gap-2 h-auto p-4 rounded-2xl bg-muted hover:bg-muted/80"
-                    asChild
-                  >
-                    <Link to="/login">
-                      <User size={24} className="text-foreground" />
-                      <span className="text-xs font-semibold">Account</span>
-                    </Link>
-                  </Button>
-                </div>
-                <div className="space-y-4">
-                  <div className="text-[10px] text-muted-foreground uppercase font-black tracking-widest pl-2">
-                    Popular Categories
+
+              <div className="space-y-8">
+                {isAuthenticated ? (
+                  <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-100 space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-white border border-zinc-200 flex items-center justify-center overflow-hidden">
+                        {user?.avatar ? (
+                          <img
+                            src={user.avatar}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <UserCircle size={24} className="text-zinc-600" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-[12px] font-black uppercase tracking-widest leading-none">
+                          {user?.firstName} {user?.lastName}
+                        </p>
+                        <p className="text-[9px] font-bold text-zinc-400 mt-1 uppercase tracking-widest">
+                          {user?.email}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        variant="outline"
+                        className="h-10 rounded-xl text-[10px] font-black uppercase tracking-widest border-zinc-200"
+                        onClick={handleLogout}
+                      >
+                        Log Out
+                      </Button>
+                      <Button className="h-10 rounded-xl bg-black text-white text-[10px] font-black uppercase tracking-widest border-none">
+                        Profile
+                      </Button>
+                    </div>
                   </div>
+                ) : (
                   <div className="grid grid-cols-2 gap-3">
-                    {["Electronics", "Fashion", "Home", "Sports"].map((cat) => (
-                      <a
+                    <Button
+                      variant="outline"
+                      className="h-12 rounded-xl text-[10px] font-black uppercase tracking-widest border-zinc-200"
+                      asChild
+                    >
+                      <Link to="/login">Sign In</Link>
+                    </Button>
+                    <Button
+                      className="h-12 rounded-xl bg-black text-white text-[10px] font-black uppercase tracking-widest border-none shadow-xl"
+                      asChild
+                    >
+                      <Link to="/register">Register</Link>
+                    </Button>
+                  </div>
+                )}
+
+                <div className="space-y-6">
+                  <div className="text-[10px] text-zinc-400 uppercase font-black tracking-[0.3em] pl-2 border-l-2 border-black">
+                    Categories
+                  </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    {[
+                      "Electronics",
+                      "Apparel",
+                      "Home Office",
+                      "Aesthetics",
+                      "Footwear",
+                    ].map((cat) => (
+                      <Link
                         key={cat}
-                        href="#"
-                        className="py-3 px-4 rounded-xl bg-muted/50 text-sm font-medium hover:bg-primary hover:text-white transition-all text-center"
+                        to={`/category/${cat.toLowerCase()}`}
+                        className="py-3 px-4 rounded-xl bg-zinc-50 text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all border border-zinc-100"
                       >
                         {cat}
-                      </a>
+                      </Link>
                     ))}
                   </div>
+                </div>
+
+                <div className="pt-8 border-t border-zinc-100">
+                  <p className="text-center text-[8px] font-black uppercase tracking-[0.4em] opacity-20">
+                    © 2026 TrendMart Minimalist Collective
+                  </p>
                 </div>
               </div>
             </SheetContent>
@@ -141,16 +285,16 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Search Bar (always visible on mobile) */}
-      <div className="md:hidden px-4 pb-4">
-        <div className="flex items-center relative">
+      {/* Mobile Search Bar - Simplified */}
+      <div className="lg:hidden px-4 pb-4">
+        <div className="flex items-center relative group">
           <Search
-            className="absolute left-3 z-10 text-muted-foreground"
-            size={16}
+            className="absolute left-4 z-10 text-zinc-400 group-focus-within:text-black transition-colors"
+            size={14}
           />
           <Input
-            placeholder="Search products..."
-            className="w-full h-11 pl-10 pr-4 text-sm rounded-xl bg-muted border-none outline-none focus-visible:ring-primary/20 transition-all"
+            placeholder="DISCOVER..."
+            className="w-full h-10 pl-11 pr-4 text-[10px] font-bold uppercase tracking-widest rounded-xl bg-zinc-50 border-zinc-100 outline-none focus-visible:ring-black/5 focus-visible:bg-white transition-all shadow-sm"
           />
         </div>
       </div>

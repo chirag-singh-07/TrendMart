@@ -65,20 +65,34 @@ export const sendVerificationEmail = async (
 ): Promise<void> => {
   await sendMail({
     to,
-    subject: "Verify your EcoomApp account",
+    subject: "Verify your TrendMart account",
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 560px; margin: auto; padding: 24px; border: 1px solid #e8e8e8; border-radius: 8px;">
-        <h2 style="color: #111;">Hi ${firstName} 👋</h2>
-        <p style="color: #444; font-size: 16px;">
-          Thanks for signing up. Use the OTP below to verify your email address.
-          <strong>It expires in 10 minutes.</strong>
-        </p>
-        <div style="text-align: center; margin: 32px 0;">
-          <span style="font-size: 40px; font-weight: bold; letter-spacing: 10px; color: #4f46e5;">${otp}</span>
+      <div style="background-color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; padding: 40px 20px; border: 1px solid #eeeeee;">
+        <div style="text-align: center; margin-bottom: 40px;">
+          <h1 style="margin: 0; font-size: 24px; letter-spacing: 2px; text-transform: uppercase; color: #000000;">TrendMart</h1>
         </div>
-        <p style="color: #888; font-size: 13px;">
-          If you didn't create an account, you can safely ignore this email.
-        </p>
+        
+        <div style="max-width: 480px; margin: auto;">
+          <h2 style="color: #000000; font-size: 20px; font-weight: 600; margin-bottom: 16px;">Confirm your email address</h2>
+          <p style="color: #666666; font-size: 15px; line-height: 1.6; margin-bottom: 32px;">
+            Hello ${firstName},<br><br>
+            To complete your registration and start shopping the latest trends, please use the verification code below. This code will expire in <strong>10 minutes</strong>.
+          </p>
+          
+          <div style="background-color: #000000; padding: 32px; text-align: center; border-radius: 4px; margin-bottom: 32px;">
+            <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #ffffff;">${otp}</span>
+          </div>
+          
+          <p style="color: #999999; font-size: 12px; line-height: 1.5; text-align: center;">
+            If you did not request this code, please ignore this email or contact support if you have concerns.
+          </p>
+        </div>
+        
+        <hr style="border: 0; border-top: 1px solid #eeeeee; margin: 40px 0;">
+        
+        <div style="text-align: center; color: #bbbbbb; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;">
+          © ${new Date().getFullYear()} TrendMart Inc.
+        </div>
       </div>
     `,
   });
@@ -97,21 +111,34 @@ export const sendPasswordResetEmail = async (
 ): Promise<void> => {
   await sendMail({
     to,
-    subject: "Reset your EcoomApp password",
+    subject: "Reset your TrendMart password",
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 560px; margin: auto; padding: 24px; border: 1px solid #e8e8e8; border-radius: 8px;">
-        <h2 style="color: #111;">Hi ${firstName},</h2>
-        <p style="color: #444; font-size: 16px;">
-          We received a request to reset your password. Use the OTP below.
-          <strong>It expires in 10 minutes.</strong>
-        </p>
-        <div style="text-align: center; margin: 32px 0;">
-          <span style="font-size: 40px; font-weight: bold; letter-spacing: 10px; color: #dc2626;">${otp}</span>
+      <div style="background-color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; padding: 40px 20px; border: 1px solid #eeeeee;">
+        <div style="text-align: center; margin-bottom: 40px;">
+          <h1 style="margin: 0; font-size: 24px; letter-spacing: 2px; text-transform: uppercase; color: #000000;">TrendMart</h1>
         </div>
-        <p style="color: #888; font-size: 13px;">
-          If you didn't request this, you can safely ignore this email.
-          Your password will not change.
-        </p>
+        
+        <div style="max-width: 480px; margin: auto;">
+          <h2 style="color: #000000; font-size: 20px; font-weight: 600; margin-bottom: 16px;">Password Reset Request</h2>
+          <p style="color: #666666; font-size: 15px; line-height: 1.6; margin-bottom: 32px;">
+            Hello ${firstName},<br><br>
+            We received a request to reset your password. Use the secure code below to proceed. This code is valid for <strong>10 minutes</strong>.
+          </p>
+          
+          <div style="background-color: #000000; padding: 32px; text-align: center; border-radius: 4px; margin-bottom: 32px;">
+            <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #ffffff;">${otp}</span>
+          </div>
+          
+          <p style="color: #999999; font-size: 12px; line-height: 1.5; text-align: center;">
+            If you did not request a password reset, you can safely ignore this email. Your account remains secure.
+          </p>
+        </div>
+        
+        <hr style="border: 0; border-top: 1px solid #eeeeee; margin: 40px 0;">
+        
+        <div style="text-align: center; color: #bbbbbb; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;">
+          © ${new Date().getFullYear()} TrendMart Inc.
+        </div>
       </div>
     `,
   });
