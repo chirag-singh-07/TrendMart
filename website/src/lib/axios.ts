@@ -6,9 +6,6 @@ export const API_BASE_URL = "http://localhost:5000";
 const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 interface AxiosRequestConfigExtended extends InternalAxiosRequestConfig {
@@ -36,6 +33,12 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Only set Content-Type for non-FormData requests
+    if (!(config.data instanceof FormData)) {
+      config.headers["Content-Type"] = "application/json";
+    }
+    
     return config;
   },
   (error) => Promise.reject(error),

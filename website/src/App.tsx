@@ -7,6 +7,11 @@ import Register from "./pages/Register";
 import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import Profile from "./pages/Profile";
+import Orders from "./pages/Orders";
+import Payments from "./pages/Payments";
+import Addresses from "./pages/Addresses";
+import Security from "./pages/Security";
+import Preferences from "./pages/Preferences";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuthStore } from "./store/authStore";
 import { Toaster } from "sonner";
@@ -23,6 +28,8 @@ function App() {
       <Toaster position="bottom-right" richColors />
       <Routes>
         {/* Public Routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
@@ -30,9 +37,12 @@ function App() {
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/payments" element={<Payments />} />
+          <Route path="/addresses" element={<Addresses />} />
+          <Route path="/security" element={<Security />} />
+          <Route path="/preferences" element={<Preferences />} />
         </Route>
       </Routes>
     </Router>

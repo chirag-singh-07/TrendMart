@@ -20,6 +20,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useAuthStore } from "@/store/authStore";
+import { API_BASE_URL } from "@/lib/axios";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -93,8 +94,9 @@ const Navbar: React.FC = () => {
                     <Avatar className="h-8 w-8 border border-zinc-200 group-hover:border-zinc-400 transition-colors">
                       <AvatarImage
                         src={
-                          user?.avatar ||
-                          "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&h=100&auto=format&fit=crop"
+                          user?.avatar
+                            ? `${API_BASE_URL}${user.avatar}`
+                            : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&h=100&auto=format&fit=crop"
                         }
                         alt={user?.firstName}
                         className="object-cover"

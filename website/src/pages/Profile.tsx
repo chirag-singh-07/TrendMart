@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useNavigate } from "react-router-dom";
 import {
   User,
   Mail,
@@ -24,6 +25,7 @@ import {
 import { toast } from "sonner";
 
 const Profile: React.FC = () => {
+  const navigate = useNavigate();
   const {
     user,
     updateProfile,
@@ -87,6 +89,18 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleNavigate = (label: string) => {
+    const routes: Record<string, string> = {
+      "Personal Details": "/profile",
+      "Track Orders": "/orders",
+      Payments: "/payments",
+      Addresses: "/addresses",
+      Security: "/security",
+      Preferences: "/preferences",
+    };
+    navigate(routes[label] || "/profile");
+  };
+
   return (
     <div className="min-h-screen bg-white text-black font-sans">
       <Navbar />
@@ -146,6 +160,7 @@ const Profile: React.FC = () => {
               ].map((item) => (
                 <button
                   key={item.label}
+                  onClick={() => handleNavigate(item.label)}
                   className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all group ${
                     item.active
                       ? "bg-black text-white shadow-xl"

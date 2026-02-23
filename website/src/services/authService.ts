@@ -43,6 +43,18 @@ export interface CommonResponse {
   errors?: string[];
 }
 
+export interface UploadResponse {
+  originalName: string;
+  filename: string;
+  folder: string;
+  path: string;
+  url: string;
+  mimetype: string;
+  sizeKB: number;
+  width?: number;
+  height?: number;
+}
+
 const authService = {
   register: async (payload: any): Promise<RegisterResponse["data"]> => {
     const response = await api.post<RegisterResponse>(
@@ -100,14 +112,18 @@ const authService = {
     const response = await api.patch("/api/auth/update-profile", payload);
     return response.data.data;
   },
-  uploadAvatar: async (file: File): Promise<{ url: string }> => {
+  uploadAvatar: async (file: File): Promise<UploadResponse> => {
     const formData = new FormData();
     formData.append("file", file);
-    const response = await api.post("/api/upload/avatar", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
+    const response = await api.post<{ success: boolean; message: string; data: UploadResponse }>(
+      "/api/upload/avatar",
+      formData,
+      {
+        headers: {
+          "Content-Type": undefined,
+        },
       },
-    });
+    );
     return response.data.data;
   },
 };
