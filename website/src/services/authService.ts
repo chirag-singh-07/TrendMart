@@ -91,6 +91,11 @@ const authService = {
     const response = await api.post<RefreshResponse>("/api/auth/refresh");
     return response.data.data;
   },
+
+  getMe: async (): Promise<{ user: User }> => {
+    const response = await api.get("/api/auth/me");
+    return response.data.data;
+  },
 };
 
 export default authService;

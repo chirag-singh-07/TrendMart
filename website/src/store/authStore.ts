@@ -122,10 +122,19 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  initializeAuth: () => {
+  initializeAuth: async () => {
     const token = localStorage.getItem("accessToken");
     if (token) {
-      set({ isAuthenticated: true, accessToken: token });
+      set({ isLoading: true });
+      try {
+        const { user } = await authService.getMe();
+        set({ user, accessToken: token, isAuthenticated: true });
+      } catch (err) {
+        localStorage.removeItem("accessToken");
+        set({ user: null, accessToken: null, isAuthenticated: false });
+      } finally {
+        set({ isLoading: false });
+      }
     }
   },
 }));

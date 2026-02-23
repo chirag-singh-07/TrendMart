@@ -267,3 +267,18 @@ export const resendOtp = async (
     handleError(err, next);
   }
 };
+// ==================== Get Me ====================
+
+export const getMe = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const authedReq = req as AuthenticatedRequest;
+    const user = await authService.getUserById(authedReq.user.userId);
+    ok(res, "User profile retrieved successfully.", { user });
+  } catch (err) {
+    handleError(err, next);
+  }
+};
