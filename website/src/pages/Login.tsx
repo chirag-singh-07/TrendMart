@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  MoveLeft,
   Mail,
   Lock,
   ArrowRight,
@@ -37,7 +36,7 @@ const Login: React.FC = () => {
       if (err.response?.status === 422 && err.response.data.errors) {
         const fieldErrors: Record<string, string> = {};
         err.response.data.errors.forEach((e: any) => {
-          fieldErrors[e.path] = e.msg;
+          fieldErrors[e.field] = e.message;
         });
         setErrors(fieldErrors);
       } else {

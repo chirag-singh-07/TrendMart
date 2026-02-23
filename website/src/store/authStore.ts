@@ -6,6 +6,7 @@ interface AuthState {
   accessToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isInitialized: boolean;
   login: (
     email: string,
     password: string,
@@ -21,8 +22,10 @@ interface AuthState {
     newPassword: string,
     navigate: (path: string) => void,
   ) => Promise<void>;
-  initializeAuth: () => void;
+  initializeAuth: () => Promise<void>;
   setLoading: (loading: boolean) => void;
+  updateProfile: (payload: any) => Promise<void>;
+  updateAvatar: (file: File) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -30,6 +33,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   accessToken: null,
   isAuthenticated: false,
   isLoading: false,
+  isInitialized: false,
 
   setLoading: (loading) => set({ isLoading: loading }),
 
@@ -128,13 +132,46 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ isLoading: true });
       try {
         const { user } = await authService.getMe();
-        set({ user, accessToken: token, isAuthenticated: true });
+        set({
+          user,
+          accessToken: token,
+          isAuthenticated: true,
+          isInitialized: true,
+        });
       } catch (err) {
         localStorage.removeItem("accessToken");
-        set({ user: null, accessToken: null, isAuthenticated: false });
+        set({
+          user: null,
+          accessToken: null,
+          isAuthenticated: false,
+          isInitialized: true,
+        });
       } finally {
         set({ isLoading: false });
       }
+    } else {
+      set({ isInitialized: true });
+    }
+  },
+
+  updateProfile: async (payload) => {
+    set({ isLoading: true });
+    try {
+      const { user } = await authService.updateProfile(payload);
+      set({ user });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  updateAvatar: async (file) => {
+    set({ isLoading: true });
+    try {
+      const { url } = await authService.uploadAvatar(file);
+      const { user } = await authService.updateProfile({ avatar: url });
+      set({ user });
+    } finally {
+      set({ isLoading: false });
     }
   },
 }));

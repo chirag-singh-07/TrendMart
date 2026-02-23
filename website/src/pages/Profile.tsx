@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
+import { API_BASE_URL } from "@/lib/axios";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -23,9 +24,31 @@ import {
 import { toast } from "sonner";
 
 const Profile: React.FC = () => {
-  const { user } = useAuthStore();
+  const {
+    user,
+    updateProfile,
+    updateAvatar,
+    isLoading: storeLoading,
+  } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [formData, setFormData] = useState({
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    phone: user?.phone || "",
+  });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phone: user.phone || "",
+      });
+    }
+  }, [user]);
 
   const userInitials = user
     ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
@@ -34,12 +57,34 @@ const Profile: React.FC = () => {
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await updateProfile(formData);
       setIsEditing(false);
       toast.success("Profile updated successfully");
-    }, 1500);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to update profile");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        return toast.error("File size must be less than 2MB");
+      }
+      try {
+        await updateAvatar(file);
+        toast.success("Avatar updated successfully");
+      } catch (err: any) {
+        toast.error(err.response?.data?.message || "Failed to upload avatar");
+      }
+    }
   };
 
   return (
@@ -53,7 +98,7 @@ const Profile: React.FC = () => {
             <div className="relative group/avatar">
               <Avatar className="w-40 h-40 rounded-3xl border-2 border-zinc-100 shadow-2xl transition-transform duration-500 group-hover/avatar:scale-[1.02]">
                 <AvatarImage
-                  src={user?.avatar || "https://github.com/shadcn.png"}
+                  src={user?.avatar ? `${API_BASE_URL}${user.avatar}` : ""}
                   alt={user?.firstName}
                   className="object-cover"
                 />
@@ -61,8 +106,23 @@ const Profile: React.FC = () => {
                   {userInitials}
                 </AvatarFallback>
               </Avatar>
-              <button className="absolute bottom-4 right-4 bg-black text-white p-3 rounded-2xl shadow-xl hover:scale-110 transition-all border border-white/20">
-                <Camera size={20} />
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+              <button
+                onClick={handleAvatarClick}
+                disabled={storeLoading}
+                className="absolute bottom-4 right-4 bg-black text-white p-3 rounded-2xl shadow-xl hover:scale-110 transition-all border border-white/20 disabled:opacity-50 disabled:scale-100"
+              >
+                {storeLoading ? (
+                  <Loader2 className="animate-spin" size={20} />
+                ) : (
+                  <Camera size={20} />
+                )}
               </button>
             </div>
 
@@ -151,7 +211,13 @@ const Profile: React.FC = () => {
                       />
                       <Input
                         disabled={!isEditing}
-                        defaultValue={user?.firstName}
+                        value={formData.firstName}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            firstName: e.target.value,
+                          })
+                        }
                         className="h-14 pl-12 rounded-2xl border-zinc-200 focus-visible:ring-black bg-white/50 text-xs font-bold uppercase tracking-widest"
                       />
                     </div>
@@ -167,7 +233,10 @@ const Profile: React.FC = () => {
                       />
                       <Input
                         disabled={!isEditing}
-                        defaultValue={user?.lastName}
+                        value={formData.lastName}
+                        onChange={(e) =>
+                          setFormData({ ...formData, lastName: e.target.value })
+                        }
                         className="h-14 pl-12 rounded-2xl border-zinc-200 focus-visible:ring-black bg-white/50 text-xs font-bold uppercase tracking-widest"
                       />
                     </div>
@@ -182,9 +251,9 @@ const Profile: React.FC = () => {
                         size={16}
                       />
                       <Input
-                        disabled={!isEditing}
-                        defaultValue={user?.email}
-                        className="h-14 pl-12 rounded-2xl border-zinc-200 focus-visible:ring-black bg-white/50 text-xs font-bold uppercase tracking-widest"
+                        disabled={true}
+                        value={user?.email}
+                        className="h-14 pl-12 rounded-2xl border-zinc-200 focus-visible:ring-black bg-zinc-100/50 text-xs font-bold uppercase tracking-widest cursor-not-allowed"
                       />
                     </div>
                   </div>
@@ -199,7 +268,10 @@ const Profile: React.FC = () => {
                       />
                       <Input
                         disabled={!isEditing}
-                        defaultValue={user?.phone || "+91 00000 00000"}
+                        value={formData.phone}
+                        onChange={(e) =>
+                          setFormData({ ...formData, phone: e.target.value })
+                        }
                         className="h-14 pl-12 rounded-2xl border-zinc-200 focus-visible:ring-black bg-white/50 text-xs font-bold tracking-widest"
                       />
                     </div>

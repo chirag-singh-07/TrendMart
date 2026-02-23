@@ -73,7 +73,7 @@ const Register: React.FC = () => {
       if (err.response?.status === 422 && err.response.data.errors) {
         const fieldErrors: Record<string, string> = {};
         err.response.data.errors.forEach((e: any) => {
-          fieldErrors[e.path] = e.msg;
+          fieldErrors[e.field] = e.message;
         });
         setErrors(fieldErrors);
       } else if (err.response?.status === 409) {

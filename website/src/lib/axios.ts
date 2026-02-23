@@ -1,6 +1,7 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+import { toast } from "sonner";
 
-const API_BASE_URL = "http://localhost:5000";
+export const API_BASE_URL = "http://localhost:5000";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -42,11 +43,23 @@ api.interceptors.request.use(
 
 // Response Interceptor
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (
+      response.data?.message &&
+      response.config.method?.toLowerCase() !== "get"
+    ) {
+      toast.success(response.data.message);
+    }
+    return response;
+  },
   async (error: AxiosError) => {
     const originalRequest = error.config as AxiosRequestConfigExtended;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/api/auth/login")
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -83,6 +96,20 @@ api.interceptors.response.use(
       } finally {
         isRefreshing = false;
       }
+    }
+
+    const errorMessage =
+      (error.response?.data as any)?.message ||
+      error.message ||
+      "An unexpected error occurred";
+
+    // Don't show toast for 401s that are about to be retried (except login/refresh)
+    const isAuthPath =
+      originalRequest.url?.includes("/api/auth/login") ||
+      originalRequest.url?.includes("/api/auth/refresh");
+
+    if (error.response?.status !== 401 || isAuthPath) {
+      toast.error(errorMessage);
     }
 
     return Promise.reject(error);

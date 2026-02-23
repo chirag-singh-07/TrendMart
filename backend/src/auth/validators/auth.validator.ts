@@ -132,6 +132,31 @@ export const resendOtpSchema = z.object({
   }),
 });
 
+// ==================== Update Profile ====================
+
+export const updateProfileSchema = z.object({
+  body: z.object({
+    firstName: z
+      .string()
+      .trim()
+      .min(2, "First name must be at least 2 characters")
+      .max(50, "First name must be at most 50 characters")
+      .optional(),
+    lastName: z
+      .string()
+      .trim()
+      .min(2, "Last name must be at least 2 characters")
+      .max(50, "Last name must be at most 50 characters")
+      .optional(),
+    phone: z
+      .string()
+      .trim()
+      .regex(/^\+?[1-9]\d{7,14}$/, "Please provide a valid phone number")
+      .optional(),
+    avatar: z.string().optional(),
+  }),
+});
+
 // ==================== Inferred types ====================
 
 export type RegisterInput = z.infer<typeof registerSchema>["body"];
@@ -141,3 +166,4 @@ export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>["body"];
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>["body"];
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>["body"];
 export type ResendOtpInput = z.infer<typeof resendOtpSchema>["body"];
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>["body"];

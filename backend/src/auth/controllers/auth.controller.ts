@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ZodSchema, ZodError } from "zod";
+import { ZodSchema } from "zod";
 import * as authService from "../services/auth.service.js";
 import {
   setRefreshTokenCookie,
@@ -14,6 +14,7 @@ import {
   resetPasswordSchema,
   changePasswordSchema,
   resendOtpSchema,
+  updateProfileSchema,
 } from "../validators/auth.validator.js";
 import { AppError } from "../../utils/AppError.js";
 import type { AuthenticatedRequest } from "../types/auth.types.js";
@@ -28,7 +29,7 @@ const validate = <T>(schema: ZodSchema<T>, req: Request): T => {
     query: req.query,
   });
   if (!result.success) {
-    const errors = result.error.errors.map((e) => ({
+    const errors = result.error.issues.map((e) => ({
       field: e.path.slice(1).join("."), // drop the leading "body" segment
       message: e.message,
     }));
@@ -156,7 +157,6 @@ export const logout = async (
       authedReq.token,
       refreshToken,
     );
-
     clearRefreshTokenCookie(res);
     ok(res, "Logged out successfully.");
   } catch (err) {
@@ -278,6 +278,23 @@ export const getMe = async (
     const authedReq = req as AuthenticatedRequest;
     const user = await authService.getUserById(authedReq.user.userId);
     ok(res, "User profile retrieved successfully.", { user });
+  } catch (err) {
+    handleError(err, next);
+  }
+};
+
+// ==================== Update Profile ====================
+
+export const updateProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { body } = validate(updateProfileSchema, req);
+    const authedReq = req as AuthenticatedRequest;
+    const result = await authService.updateProfile(authedReq.user.userId, body);
+    ok(res, "Profile updated successfully.", { user: result });
   } catch (err) {
     handleError(err, next);
   }

@@ -20,7 +20,7 @@ function App() {
 
   return (
     <Router>
-      <Toaster position="top-center" richColors />
+      <Toaster position="bottom-right" richColors />
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />

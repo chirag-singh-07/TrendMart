@@ -98,6 +98,7 @@ export interface TokenGenerationResult {
 export type OtpType = "verify" | "reset";
 
 export interface AuthenticatedRequest extends express.Request {
-  user?: ITokenPayload;
+  user: ITokenPayload;
+  token: string;
   deviceInfo?: IDeviceInfo;
 }

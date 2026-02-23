@@ -77,6 +77,12 @@ router.post("/logout-all", authenticate, authController.logoutAll);
 router.post("/change-password", authenticate, authController.changePassword);
 
 /**
+ * PATCH /auth/update-profile
+ * Update current user profile.
+ */
+router.patch("/update-profile", authenticate, authController.updateProfile);
+
+/**
  * GET /auth/me
  * Get current user profile (requires valid access token).
  */

@@ -25,6 +25,7 @@ import type {
   ResetPasswordInput,
   ChangePasswordInput,
   ResendOtpInput,
+  UpdateProfileInput,
 } from "../validators/auth.validator.js";
 import { Role } from "../types/auth.types.js";
 
@@ -463,4 +464,48 @@ export const resendOtp = async (input: ResendOtpInput): Promise<void> => {
   } catch (mailErr) {
     console.error("[auth.service] Failed to resend OTP email:", mailErr);
   }
+};
+
+export const getUserById = async (userId: string) => {
+  return User.findById(userId);
+};
+
+/**
+ * Updates user profile details.
+ */
+export const updateProfile = async (
+  userId: string,
+  input: UpdateProfileInput,
+) => {
+  const user = await User.findById(userId);
+  if (!user) throw new AppError("User not found.", 404);
+
+  // Check if phone is being updated and if it's already in use
+  if (input.phone && input.phone !== user.phone) {
+    const existingByPhone = await User.findOne({ phone: input.phone }).lean();
+    if (existingByPhone) {
+      throw new AppError(
+        "An account with this phone number already exists.",
+        409,
+      );
+    }
+    user.phone = input.phone;
+    user.isPhoneVerified = false;
+  }
+
+  if (input.firstName) user.firstName = input.firstName;
+  if (input.lastName) user.lastName = input.lastName;
+  if (input.avatar) user.avatar = input.avatar;
+
+  await user.save();
+
+  return {
+    _id: user._id.toString(),
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    phone: user.phone,
+    avatar: user.avatar,
+    role: user.role,
+  };
 };

@@ -96,6 +96,20 @@ const authService = {
     const response = await api.get("/api/auth/me");
     return response.data.data;
   },
+  updateProfile: async (payload: any): Promise<{ user: User }> => {
+    const response = await api.patch("/api/auth/update-profile", payload);
+    return response.data.data;
+  },
+  uploadAvatar: async (file: File): Promise<{ url: string }> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await api.post("/api/upload/avatar", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data.data;
+  },
 };
 
 export default authService;
