@@ -4,11 +4,11 @@ import {
   Search,
   Heart,
   ShoppingCart,
-  User,
   Menu,
   LogOut,
   Package,
   UserCircle,
+  Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
@@ -37,11 +38,15 @@ const Navbar: React.FC = () => {
     await logout(navigate);
   };
 
+  const userInitials = user
+    ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
+    : "U";
+
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-zinc-100">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-6">
         {/* Left: Logo */}
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <Link
             to="/"
             className="text-2xl font-black tracking-tighter text-black uppercase italic flex items-center gap-2 group"
@@ -54,7 +59,7 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Center: Search Bar */}
-        <div className="hidden md:flex flex-grow max-w-xl items-center relative group">
+        <div className="hidden md:flex grow max-w-xl items-center relative group">
           <Search
             className="absolute left-4 z-10 text-zinc-400 group-focus-within:text-black transition-colors"
             size={16}
@@ -76,26 +81,28 @@ const Navbar: React.FC = () => {
               <Heart size={20} />
             </Button>
 
-            <div className="h-4 w-[1px] bg-zinc-100 mx-2" />
+            <div className="h-4 w-px bg-zinc-100 mx-2" />
 
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="rounded-xl px-3 gap-2 hover:bg-zinc-50 transition-all group"
+                    className="rounded-xl px-2 gap-2 hover:bg-zinc-50 transition-all group h-10"
                   >
-                    <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center overflow-hidden border border-zinc-200 group-hover:border-zinc-400 transition-colors">
-                      {user?.avatar ? (
-                        <img
-                          src={user.avatar}
-                          alt={user.firstName}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <UserCircle size={18} className="text-zinc-600" />
-                      )}
-                    </div>
+                    <Avatar className="h-8 w-8 border border-zinc-200 group-hover:border-zinc-400 transition-colors">
+                      <AvatarImage
+                        src={
+                          user?.avatar ||
+                          "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&h=100&auto=format&fit=crop"
+                        }
+                        alt={user?.firstName}
+                        className="object-cover"
+                      />
+                      <AvatarFallback className="bg-zinc-100 text-[10px] font-black">
+                        {userInitials}
+                      </AvatarFallback>
+                    </Avatar>
                     <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600 group-hover:text-black transition-colors">
                       {user?.firstName}
                     </span>
@@ -109,13 +116,16 @@ const Navbar: React.FC = () => {
                     Profile Portal
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-zinc-50" />
-                  <DropdownMenuItem className="rounded-xl px-3 py-2.5 cursor-pointer hover:bg-zinc-50 transition-all group">
+                  <DropdownMenuItem
+                    onClick={() => navigate("/profile")}
+                    className="rounded-xl px-3 py-2.5 cursor-pointer hover:bg-zinc-50 transition-all group"
+                  >
                     <UserCircle
                       size={16}
                       className="mr-3 text-zinc-400 group-hover:text-black transition-colors"
                     />
                     <span className="text-[10px] font-bold uppercase tracking-widest">
-                      Dashboard
+                      Profile
                     </span>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="rounded-xl px-3 py-2.5 cursor-pointer hover:bg-zinc-50 transition-all group">
@@ -125,6 +135,15 @@ const Navbar: React.FC = () => {
                     />
                     <span className="text-[10px] font-bold uppercase tracking-widest">
                       Order History
+                    </span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="rounded-xl px-3 py-2.5 cursor-pointer hover:bg-zinc-50 transition-all group">
+                    <Settings
+                      size={16}
+                      className="mr-3 text-zinc-400 group-hover:text-black transition-colors"
+                    />
+                    <span className="text-[10px] font-bold uppercase tracking-widest">
+                      Settings
                     </span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-zinc-50" />
@@ -161,7 +180,7 @@ const Navbar: React.FC = () => {
             )}
           </div>
 
-          <div className="h-4 w-[1px] bg-zinc-100 mx-1 hidden lg:block" />
+          <div className="h-4 w-px bg-zinc-100 mx-1 hidden lg:block" />
 
           <Button
             size="icon"
@@ -201,16 +220,16 @@ const Navbar: React.FC = () => {
                 {isAuthenticated ? (
                   <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-100 space-y-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-white border border-zinc-200 flex items-center justify-center overflow-hidden">
-                        {user?.avatar ? (
-                          <img
-                            src={user.avatar}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <UserCircle size={24} className="text-zinc-600" />
-                        )}
-                      </div>
+                      <Avatar className="h-12 w-12 rounded-xl border border-zinc-200">
+                        <AvatarImage
+                          src={user?.avatar || "https://github.com/shadcn.png"}
+                          alt={user?.firstName}
+                          className="object-cover"
+                        />
+                        <AvatarFallback className="bg-white text-xs font-black">
+                          {userInitials}
+                        </AvatarFallback>
+                      </Avatar>
                       <div>
                         <p className="text-[12px] font-black uppercase tracking-widest leading-none">
                           {user?.firstName} {user?.lastName}
@@ -228,7 +247,10 @@ const Navbar: React.FC = () => {
                       >
                         Log Out
                       </Button>
-                      <Button className="h-10 rounded-xl bg-black text-white text-[10px] font-black uppercase tracking-widest border-none">
+                      <Button
+                        className="h-10 rounded-xl bg-black text-white text-[10px] font-black uppercase tracking-widest border-none"
+                        onClick={() => navigate("/profile")}
+                      >
                         Profile
                       </Button>
                     </div>
