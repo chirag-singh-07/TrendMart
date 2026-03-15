@@ -2,7 +2,7 @@ import { Router } from "express";
 import { refundController } from "../controllers/refund.controller.js";
 import { authenticate } from "../../auth/middlewares/authenticate.middleware.js";
 import { authorize } from "../../auth/middlewares/authorize.middleware.js";
-import { validate } from "../../middleware/validate.middleware.js";
+import { validateRequest } from "../../middleware/validate.middleware.js";
 import {
   processRefundSchema,
   partialRefundSchema,
@@ -15,7 +15,7 @@ router.post(
   "/process/:orderId",
   authenticate,
   authorize("admin"),
-  validate(processRefundSchema),
+  validateRequest(processRefundSchema),
   refundController.processRefund,
 );
 
@@ -23,7 +23,7 @@ router.post(
   "/partial/:orderId",
   authenticate,
   authorize("admin"),
-  validate(partialRefundSchema),
+  validateRequest(partialRefundSchema),
   refundController.processPartialRefund,
 );
 

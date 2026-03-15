@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { addressController } from "../controllers/address.controller.js";
 
-import { validate } from "../../middleware/validate.middleware.js";
+import { validateRequest } from "../../middleware/validate.middleware.js";
 import {
   createAddressSchema,
   updateAddressSchema,
@@ -18,7 +18,7 @@ router.use(authorize("buyer", "admin"));
 router.get("/", addressController.getUserAddresses);
 router.post(
   "/",
-  validate(createAddressSchema),
+  validateRequest(createAddressSchema),
   addressController.createAddress,
 );
 
@@ -26,7 +26,7 @@ router.get("/:addressId", addressOwner, addressController.getAddressById);
 router.patch(
   "/:addressId",
   addressOwner,
-  validate(updateAddressSchema),
+  validateRequest(updateAddressSchema),
   addressController.updateAddress,
 );
 router.delete("/:addressId", addressOwner, addressController.deleteAddress);

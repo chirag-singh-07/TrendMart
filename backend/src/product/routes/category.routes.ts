@@ -2,7 +2,7 @@ import { Router } from "express";
 import { categoryController } from "../controllers/category.controller.js";
 import { authenticate } from "../../auth/middlewares/authenticate.middleware.js";
 import { authorize } from "../../auth/middlewares/authorize.middleware.js";
-import { validate } from "../../middleware/validate.middleware.js";
+import { validateRequest } from "../../middleware/validate.middleware.js";
 import {
   createCategorySchema,
   updateCategorySchema,
@@ -21,17 +21,17 @@ router.use(authenticate, authorize("admin" as any));
 router.get("/all", categoryController.getAllCategories);
 router.post(
   "/",
-  validate(createCategorySchema),
+  validateRequest(createCategorySchema),
   categoryController.createCategory,
 );
 router.patch(
   "/reorder",
-  validate(reorderCategoriesSchema),
+  validateRequest(reorderCategoriesSchema),
   categoryController.reorderCategories,
 );
 router.patch(
   "/:categoryId",
-  validate(updateCategorySchema),
+  validateRequest(updateCategorySchema),
   categoryController.updateCategory,
 );
 router.delete("/:categoryId", categoryController.deleteCategory);

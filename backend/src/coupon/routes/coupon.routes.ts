@@ -3,7 +3,7 @@ import { couponController } from "../controllers/coupon.controller.js";
 import { couponUsageController } from "../controllers/couponUsage.controller.js";
 import { authenticate } from "../../auth/middlewares/authenticate.middleware.js";
 import { authorize } from "../../auth/middlewares/authorize.middleware.js";
-import { validate } from "../../middleware/validate.middleware.js";
+import { validateRequest } from "../../middleware/validate.middleware.js";
 import { couponAccessMiddleware } from "../middlewares/couponAccess.middleware.js";
 import {
   createCouponSchema,
@@ -23,7 +23,7 @@ router.post(
   "/validate",
   authenticate,
   authorize("buyer"),
-  validate(validateCouponSchema),
+  validateRequest(validateCouponSchema),
   couponController.validate,
 );
 
@@ -42,13 +42,13 @@ adminRouter.use(authenticate, authorize("admin"));
 
 adminRouter.get(
   "/",
-  validate(couponFiltersSchema),
+  validateRequest(couponFiltersSchema),
   couponController.getAllCoupons,
 );
 
 adminRouter.post(
   "/",
-  validate(createCouponSchema),
+  validateRequest(createCouponSchema),
   couponController.createCoupon,
 );
 
@@ -56,7 +56,7 @@ adminRouter.get("/:couponId", couponController.getCouponById);
 
 adminRouter.patch(
   "/:couponId",
-  validate(updateCouponSchema),
+  validateRequest(updateCouponSchema),
   couponController.updateCoupon,
 );
 
@@ -68,7 +68,7 @@ adminRouter.get("/:couponId/stats", couponController.getCouponStats);
 
 adminRouter.get(
   "/:couponId/usage",
-  validate(usageFiltersSchema),
+  validateRequest(usageFiltersSchema),
   couponUsageController.getCouponUsage,
 );
 

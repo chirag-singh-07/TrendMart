@@ -2,7 +2,7 @@ import { Router } from "express";
 import { paymentController } from "../controllers/payment.controller.js";
 import { authenticate } from "../../auth/middlewares/authenticate.middleware.js";
 import { authorize } from "../../auth/middlewares/authorize.middleware.js";
-import { validate } from "../../middleware/validate.middleware.js";
+import { validateRequest } from "../../middleware/validate.middleware.js";
 import {
   initiatePaymentSchema,
   confirmStripeSchema,
@@ -15,7 +15,7 @@ router.post(
   "/initiate",
   authenticate,
   authorize("buyer"),
-  validate(initiatePaymentSchema),
+  validateRequest(initiatePaymentSchema),
   paymentController.initiatePayment,
 );
 
@@ -23,7 +23,7 @@ router.post(
   "/stripe/confirm",
   authenticate,
   authorize("buyer"),
-  validate(confirmStripeSchema),
+  validateRequest(confirmStripeSchema),
   paymentController.confirmStripePayment,
 );
 

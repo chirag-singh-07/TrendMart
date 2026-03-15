@@ -3,7 +3,7 @@ import { orderController } from "../controllers/order.controller.js";
 import { orderItemController } from "../controllers/orderItem.controller.js";
 import { authenticate } from "../../auth/middlewares/authenticate.middleware.js";
 import { authorize } from "../../auth/middlewares/authorize.middleware.js";
-import { validate } from "../../middleware/validate.middleware.js";
+import { validateRequest } from "../../middleware/validate.middleware.js";
 import {
   placeOrderSchema,
   cancelOrderSchema,
@@ -22,7 +22,7 @@ router.post(
   "/",
   authenticate,
   authorize("buyer"),
-  validate(placeOrderSchema),
+  validateRequest(placeOrderSchema),
   orderController.placeOrder,
 );
 
@@ -30,7 +30,7 @@ router.get(
   "/",
   authenticate,
   authorize("buyer"),
-  validate(orderFiltersSchema),
+  validateRequest(orderFiltersSchema),
   orderController.getMyOrders,
 );
 
@@ -55,7 +55,7 @@ router.post(
   authenticate,
   authorize("buyer"),
   orderOwnerMiddleware,
-  validate(cancelOrderSchema),
+  validateRequest(cancelOrderSchema),
   orderController.cancelOrder,
 );
 
@@ -64,7 +64,7 @@ router.post(
   authenticate,
   authorize("buyer"),
   orderOwnerMiddleware,
-  validate(refundRequestSchema),
+  validateRequest(refundRequestSchema),
   orderController.requestRefund,
 );
 
@@ -81,7 +81,7 @@ sellerRouter.get(
   "/",
   authenticate,
   authorize("seller"),
-  validate(orderFiltersSchema),
+  validateRequest(orderFiltersSchema),
   orderItemController.getSellerOrders,
 );
 
@@ -89,7 +89,7 @@ sellerRouter.get(
   "/items",
   authenticate,
   authorize("seller"),
-  validate(orderFiltersSchema),
+  validateRequest(orderFiltersSchema),
   orderItemController.getSellerItems,
 );
 
@@ -106,7 +106,7 @@ sellerRouter.patch(
   authenticate,
   authorize("seller"),
   orderSellerMiddleware,
-  validate(updateStatusSchema),
+  validateRequest(updateStatusSchema),
   orderItemController.updateStatus,
 );
 

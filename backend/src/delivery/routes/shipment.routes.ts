@@ -2,7 +2,7 @@ import { Router } from "express";
 import { shipmentController } from "../controllers/shipment.controller.js";
 import { authenticate } from "../../auth/middlewares/authenticate.middleware.js";
 import { authorize } from "../../auth/middlewares/authorize.middleware.js";
-import { validate } from "../../middleware/validate.middleware.js";
+import { validateRequest } from "../../middleware/validate.middleware.js";
 import {
   createShipmentSchema,
   updateStatusSchema,
@@ -18,20 +18,20 @@ router.use(authenticate);
 router.post(
   "/",
   authorize("admin"),
-  validate(createShipmentSchema),
+  validateRequest(createShipmentSchema),
   shipmentController.createShipment,
 );
 router.get("/", authorize("admin"), shipmentController.getAllShipments);
 router.patch(
   "/:shipmentId/assign",
   authorize("admin"),
-  validate(assignPartnerSchema),
+  validateRequest(assignPartnerSchema),
   shipmentController.assignPartner,
 );
 router.patch(
   "/:shipmentId/reassign",
   authorize("admin"),
-  validate(assignPartnerSchema),
+  validateRequest(assignPartnerSchema),
   shipmentController.reassignPartner,
 );
 router.post(
@@ -50,7 +50,7 @@ router.patch(
   "/:shipmentId/status",
   authorize("admin", "seller", "delivery"),
   shipmentAccess,
-  validate(updateStatusSchema),
+  validateRequest(updateStatusSchema),
   shipmentController.updateStatus,
 );
 router.get("/order/:orderId", shipmentController.getShipmentByOrder);

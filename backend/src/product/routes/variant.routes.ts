@@ -2,7 +2,7 @@ import { Router } from "express";
 import { variantController } from "../controllers/variant.controller.js";
 import { authenticate } from "../../auth/middlewares/authenticate.middleware.js";
 import { authorize } from "../../auth/middlewares/authorize.middleware.js";
-import { validate } from "../../middleware/validate.middleware.js";
+import { validateRequest } from "../../middleware/validate.middleware.js";
 import { isProductOwner } from "../middlewares/productOwner.middleware.js";
 import {
   createVariantSchema,
@@ -21,7 +21,7 @@ router.post(
   authenticate,
   authorize("seller" as any),
   isProductOwner,
-  validate(createVariantSchema),
+  validateRequest(createVariantSchema),
   variantController.createVariant,
 );
 router.patch(
@@ -29,7 +29,7 @@ router.patch(
   authenticate,
   authorize("seller" as any),
   isProductOwner,
-  validate(updateVariantSchema),
+  validateRequest(updateVariantSchema),
   variantController.updateVariant,
 );
 router.delete(

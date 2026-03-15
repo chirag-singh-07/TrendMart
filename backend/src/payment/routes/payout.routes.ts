@@ -2,7 +2,7 @@ import { Router } from "express";
 import { payoutController } from "../controllers/payout.controller.js";
 import { authenticate } from "../../auth/middlewares/authenticate.middleware.js";
 import { authorize } from "../../auth/middlewares/authorize.middleware.js";
-import { validate } from "../../middleware/validate.middleware.js";
+import { validateRequest } from "../../middleware/validate.middleware.js";
 import { payoutSchema } from "../validators/payment.validator.js";
 
 const router = Router();
@@ -34,7 +34,7 @@ router.post(
   "/initiate",
   authenticate,
   authorize("admin"),
-  validate(payoutSchema),
+  validateRequest(payoutSchema),
   payoutController.initiatePayout,
 );
 

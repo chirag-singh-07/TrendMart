@@ -3,7 +3,7 @@ import { deliveryPartnerController } from "../controllers/deliveryPartner.contro
 import { trackingController } from "../controllers/tracking.controller.js";
 import { authenticate } from "../../auth/middlewares/authenticate.middleware.js";
 import { authorize } from "../../auth/middlewares/authorize.middleware.js";
-import { validate } from "../../middleware/validate.middleware.js";
+import { validateRequest } from "../../middleware/validate.middleware.js";
 import {
   updateProfileSchema,
   updateAvailabilitySchema,
@@ -23,19 +23,19 @@ router.get(
 router.patch(
   "/me",
   authorize("delivery"),
-  validate(updateProfileSchema),
+  validateRequest(updateProfileSchema),
   deliveryPartnerController.updateOwnProfile,
 );
 router.patch(
   "/me/availability",
   authorize("delivery"),
-  validate(updateAvailabilitySchema),
+  validateRequest(updateAvailabilitySchema),
   deliveryPartnerController.updateAvailability,
 );
 router.post(
   "/me/location",
   authorize("delivery"),
-  validate(locationUpdateSchema),
+  validateRequest(locationUpdateSchema),
   trackingController.updateLiveLocation,
 );
 router.get(
@@ -64,7 +64,7 @@ router.get(
 router.patch(
   "/:partnerId",
   authorize("admin"),
-  validate(updateProfileSchema),
+  validateRequest(updateProfileSchema),
   deliveryPartnerController.updatePartnerAdmin,
 );
 

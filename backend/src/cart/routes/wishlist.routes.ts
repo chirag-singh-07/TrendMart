@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { wishlistController } from "../controllers/wishlist.controller.js";
 import { authenticate } from "../../auth/middlewares/authenticate.middleware.js";
-import { validate } from "../../middleware/validate.middleware.js";
+import { validateRequest } from "../../middleware/validate.middleware.js";
 import {
   addToWishlistSchema,
   moveToCartSchema,
@@ -16,23 +16,23 @@ router.use(authenticate);
 router.get("/", wishlistController.getWishlist);
 router.post(
   "/items",
-  validate(addToWishlistSchema),
+  validateRequest(addToWishlistSchema),
   wishlistController.addToWishlist,
 );
 router.delete(
   "/items/:productId",
-  validate(removeFromWishlistSchema),
+  validateRequest(removeFromWishlistSchema),
   wishlistController.removeFromWishlist,
 );
 router.delete("/", wishlistController.clearWishlist);
 router.get(
   "/check/:productId",
-  validate(removeFromWishlistSchema),
+  validateRequest(removeFromWishlistSchema),
   wishlistController.checkWishlist,
 ); // Reuse schema for productId param
 router.post(
   "/move-to-cart",
-  validate(moveToCartSchema),
+  validateRequest(moveToCartSchema),
   wishlistController.moveToCart,
 );
 

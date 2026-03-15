@@ -2,7 +2,7 @@ import { Router } from "express";
 import { walletController } from "../controllers/wallet.controller.js";
 import { authenticate } from "../../auth/middlewares/authenticate.middleware.js";
 import { authorize } from "../../auth/middlewares/authorize.middleware.js";
-import { validate } from "../../middleware/validate.middleware.js";
+import { validateRequest } from "../../middleware/validate.middleware.js";
 import {
   topUpSchema,
   adminCreditSchema,
@@ -29,7 +29,7 @@ router.post(
   "/topup",
   authenticate,
   authorize("buyer"),
-  validate(topUpSchema),
+  validateRequest(topUpSchema),
   walletController.topUpWallet,
 );
 
@@ -45,7 +45,7 @@ router.post(
   "/admin/credit",
   authenticate,
   authorize("admin"),
-  validate(adminCreditSchema),
+  validateRequest(adminCreditSchema),
   walletController.adminCreditWallet,
 );
 

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { adminReviewController } from "../controllers/adminReview.controller.js";
 import { authenticate } from "../../auth/middlewares/authenticate.middleware.js";
 import { authorize } from "../../auth/middlewares/authorize.middleware.js";
-import { validate } from "../../middleware/validate.middleware.js";
+import { validateRequest } from "../../middleware/validate.middleware.js";
 import {
   reviewFiltersSchema,
   bulkModerateSchema,
@@ -14,7 +14,7 @@ router.use(authenticate, authorize("admin"));
 
 router.get(
   "/",
-  validate(reviewFiltersSchema),
+  validateRequest(reviewFiltersSchema),
   adminReviewController.getAllReviews,
 );
 router.get("/moderation-queue", adminReviewController.getModerationQueue);
@@ -24,7 +24,7 @@ router.patch("/:reviewId/reject", adminReviewController.rejectReview);
 router.patch("/:reviewId/flag", adminReviewController.flagReview);
 router.post(
   "/bulk-moderate",
-  validate(bulkModerateSchema),
+  validateRequest(bulkModerateSchema),
   adminReviewController.bulkModerate,
 );
 router.delete("/:reviewId", adminReviewController.deleteReview);
