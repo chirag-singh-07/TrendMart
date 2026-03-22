@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import {
   Search,
   Bell,
@@ -20,8 +19,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { authService } from "@/services/authService";
 
 export function Navbar() {
+  const sellerData = JSON.parse(localStorage.getItem("seller_data") || "{}");
+  const sellerName = `${sellerData.firstName || ""} ${sellerData.lastName || ""}`.trim() || "Elite Seller";
+
+  const handleLogout = async () => {
+    await authService.logout();
+    window.location.href = "/login";
+  };
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
@@ -85,7 +92,7 @@ export function Navbar() {
             <MessageSquare className="h-5 w-5" />
           </Button>
 
-          <div className="h-6 w-[1px] bg-gray-200 mx-2" />
+          <div className="h-6 w-px bg-gray-200 mx-2" />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -98,9 +105,9 @@ export function Navbar() {
                   <AvatarFallback>TM</AvatarFallback>
                 </Avatar>
                 <div className="hidden lg:block text-left">
-                  <p className="text-xs font-bold leading-none">Chirag Singh</p>
+                  <p className="text-xs font-bold leading-none">{sellerName}</p>
                   <p className="text-[10px] text-gray-500 mt-0.5">
-                    Elite Seller
+                    {sellerData.role === "seller" ? "Merchant Member" : "Elite Partner"}
                   </p>
                 </div>
               </Button>
@@ -121,12 +128,10 @@ export function Navbar() {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                asChild
+                onClick={handleLogout}
                 className="cursor-pointer gap-2 text-red-600 py-2.5"
               >
-                <Link to="/login">
-                  <LogOut size={16} /> Logout
-                </Link>
+                <LogOut size={16} /> Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

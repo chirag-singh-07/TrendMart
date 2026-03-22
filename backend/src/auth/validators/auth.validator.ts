@@ -35,6 +35,9 @@ export const registerSchema = z.object({
     role: z.enum(["buyer", "seller"], {
       message: "Role must be either 'buyer' or 'seller'",
     }),
+    shopName: z.string().trim().min(2).optional(),
+    shopDescription: z.string().trim().min(10).optional(),
+    businessPhone: z.string().trim().optional(),
   }),
 });
 

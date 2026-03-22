@@ -2,6 +2,9 @@ import { Plus, BarChart3, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function HeroSection() {
+  const sellerData = JSON.parse(localStorage.getItem("seller_data") || "{}");
+  const firstName = sellerData.firstName || "Elite";
+
   return (
     <section className="py-12 md:py-20 bg-white">
       <div className="container mx-auto px-4 flex flex-col lg:flex-row items-center gap-12">
@@ -11,8 +14,8 @@ export function HeroSection() {
               Edition 2026
             </div>
             <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9]">
-              Define Your <br />
-              <span className="text-gray-300 italic">Commerce.</span>
+              Welcome, <br />
+              <span className="text-gray-300 italic">{firstName}.</span>
             </h1>
             <p className="text-xl text-gray-500 max-w-lg font-medium leading-relaxed pt-4">
               The professional environment for elite sellers to manage products,

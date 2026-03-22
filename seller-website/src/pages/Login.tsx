@@ -1,16 +1,53 @@
-import { Link } from "react-router-dom";
-import { Mail, Lock, ArrowRight, Github, Chrome } from "lucide-react";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Mail, Lock, ArrowRight, Github, Chrome, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { authService } from "../services/authService";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const result = await authService.login(formData);
+      
+      // Check if user is actually a seller
+      if (result.data.user.role !== "seller") {
+        await authService.logout();
+        throw new Error("Only authorized merchants can access this portal.");
+      }
+
+      // Successful login
+      navigate("/dashboard");
+    } catch (err: any) {
+      setError(err?.response?.data?.message || err.message || "Invalid credentials. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen w-full flex bg-white font-['Inter']">
       {/* Left Side: Branding & Narrative */}
       <div className="hidden lg:flex lg:w-1/2 bg-black relative overflow-hidden flex-col justify-between p-16">
-        {/* Abstract design elements */}
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-white/5 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] bg-white/5 rounded-full blur-[150px] animate-pulse" />
 
@@ -82,7 +119,13 @@ export default function Login() {
             </p>
           </div>
 
-          <form className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {error && (
+              <div className="p-4 bg-red-50 border border-red-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-red-600 animate-in fade-in slide-in-from-top-2">
+                {error}
+              </div>
+            )}
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label
@@ -95,6 +138,9 @@ export default function Login() {
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-300 group-focus-within:text-black transition-colors" />
                   <Input
                     id="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
                     placeholder="name@company.com"
                     className="pl-12 h-14 rounded-2xl border-gray-100 bg-gray-50/50 focus-visible:ring-black/5 focus-visible:bg-white transition-all font-medium"
                   />
@@ -121,6 +167,9 @@ export default function Login() {
                   <Input
                     id="password"
                     type="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
                     placeholder="••••••••"
                     className="pl-12 h-14 rounded-2xl border-gray-100 bg-gray-50/50 focus-visible:ring-black/5 focus-visible:bg-white transition-all font-medium"
                   />
@@ -141,12 +190,15 @@ export default function Login() {
               </label>
             </div>
 
-            <Button className="w-full h-16 rounded-2xl bg-black text-white hover:bg-black/90 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] transition-all font-black text-xs uppercase tracking-[0.2em] group flex items-center justify-center gap-2">
-              Authenticate
-              <ArrowRight
+            <Button 
+              disabled={loading}
+              className="w-full h-16 rounded-2xl bg-black text-white hover:bg-black/90 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] transition-all font-black text-xs uppercase tracking-[0.2em] group flex items-center justify-center gap-2"
+            >
+              {loading ? <Loader2 className="animate-spin" size={20} /> : "Authenticate"}
+              {!loading && <ArrowRight
                 size={16}
                 className="transition-transform group-hover:translate-x-1"
-              />
+              />}
             </Button>
           </form>
 

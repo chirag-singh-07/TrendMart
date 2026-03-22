@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import User from "../../models/User.model.js";
+import Seller from "../../models/Seller.model.js";
 import { AppError } from "../../utils/AppError.js";
 import { hashPassword, comparePassword } from "../utils/password.util.js";
 import {
@@ -86,6 +87,22 @@ export const register = async (
     accountStatus: "active",
   });
 
+  // If role is seller, create the Seller document
+  if (role === "seller") {
+    const sName = input.shopName || `${firstName}'s Shop`;
+    const sSlug = sName.toLowerCase().replace(/[^a-z0-9]/g, "-") + "-" + Date.now();
+    
+    await Seller.create({
+      userId: user._id,
+      shopName: sName,
+      shopSlug: sSlug,
+      description: input.shopDescription || "Default shop description.",
+      businessEmail: email,
+      businessAddress: "Update your business address",
+      businessPhone: input.businessPhone || phone || "Update your business phone",
+    });
+  }
+
   // Generate and send verification OTP
   const otp = await createOtp("verify", user._id.toString());
 
@@ -139,6 +156,7 @@ interface LoginResult {
     email: string;
     role: string;
     avatar?: string;
+    sellerId?: string;
   };
 }
 
@@ -220,6 +238,13 @@ export const login = async (input: LoginInput): Promise<LoginResult> => {
 
   await user.save();
 
+  // If user is a seller, fetch the seller ID for the frontend
+  let sellerId: string | undefined;
+  if (user.role === "seller") {
+    const seller = await Seller.findOne({ userId: user._id });
+    sellerId = seller?._id.toString();
+  }
+
   return {
     accessToken,
     refreshToken,
@@ -230,6 +255,7 @@ export const login = async (input: LoginInput): Promise<LoginResult> => {
       email: user.email,
       role: user.role,
       avatar: user.avatar,
+      sellerId,
     },
   };
 };
