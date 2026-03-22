@@ -1,398 +1,317 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Package,
+  ShoppingBag,
   Search,
   Filter,
-  Download,
   Eye,
-  Check,
+  RefreshCw,
+  Loader2,
+  CheckCircle,
+  AlertTriangle,
   Clock,
   Truck,
-  MapPin,
-  User,
-  ShoppingCart,
+  Package,
+  XCircle,
+  Undo2,
+  Receipt,
 } from "lucide-react";
-
-interface Order {
-  id: string;
-  customer: {
-    name: string;
-    email: string;
-  };
-  items: number;
-  amount: number;
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
-  paymentStatus: "pending" | "completed" | "failed";
-  date: string;
-  deliveryAddress: string;
-}
+import { adminOrderService, type Order } from "../services/adminOrderService";
 
 const Orders: React.FC = () => {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState<string>("all");
-  const [filterPayment, setFilterPayment] = useState<string>("all");
-  const [dateRange, setDateRange] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState("all");
 
-  const orders: Order[] = [
-    {
-      id: "ORD001",
-      customer: { name: "John Doe", email: "john@example.com" },
-      items: 3,
-      amount: 4599,
-      status: "delivered",
-      paymentStatus: "completed",
-      date: "2024-02-15",
-      deliveryAddress: "123 Main St, Mumbai",
-    },
-    {
-      id: "ORD002",
-      customer: { name: "Jane Smith", email: "jane@example.com" },
-      items: 2,
-      amount: 7998,
-      status: "shipped",
-      paymentStatus: "completed",
-      date: "2024-02-20",
-      deliveryAddress: "456 Oak Ave, Delhi",
-    },
-    {
-      id: "ORD003",
-      customer: { name: "Mike Johnson", email: "mike@example.com" },
-      items: 1,
-      amount: 2499,
-      status: "processing",
-      paymentStatus: "completed",
-      date: "2024-02-21",
-      deliveryAddress: "789 Pine Rd, Bangalore",
-    },
-    {
-      id: "ORD004",
-      customer: { name: "Sarah Williams", email: "sarah@example.com" },
-      items: 4,
-      amount: 9899,
-      status: "pending",
-      paymentStatus: "pending",
-      date: "2024-02-22",
-      deliveryAddress: "321 Elm St, Hyderabad",
-    },
-    {
-      id: "ORD005",
-      customer: { name: "Robert Brown", email: "robert@example.com" },
-      items: 2,
-      amount: 5998,
-      status: "cancelled",
-      paymentStatus: "failed",
-      date: "2024-02-10",
-      deliveryAddress: "654 Maple Dr, Pune",
-    },
-  ];
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  const filteredOrders = orders.filter((order) => {
-    const matchesSearch =
-      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customer.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === "all" || order.status === filterStatus;
-    const matchesPayment =
-      filterPayment === "all" || order.paymentStatus === filterPayment;
-    return matchesSearch && matchesStatus && matchesPayment;
-  });
+  const showToast = (msg: string, type: "success" | "error" = "success") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "bg-orange-100 text-orange-700";
-      case "processing":
-        return "bg-blue-100 text-blue-700";
-      case "shipped":
-        return "bg-purple-100 text-purple-700";
-      case "delivered":
-        return "bg-green-100 text-green-700";
-      case "cancelled":
-        return "bg-red-100 text-red-700";
-      default:
-        return "bg-gray-100 text-gray-700";
+  const fetchOrders = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const params: any = {};
+      if (searchTerm) params.search = searchTerm;
+      if (filterStatus !== "all") params.status = filterStatus;
+
+      const data = await adminOrderService.getAll(params);
+      setOrders(data.orders);
+    } catch {
+      setError("Failed to fetch order history.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getPaymentColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-100 text-green-700";
-      case "pending":
-        return "bg-yellow-100 text-yellow-700";
-      case "failed":
-        return "bg-red-100 text-red-700";
-      default:
-        return "bg-gray-100 text-gray-700";
+  useEffect(() => {
+    fetchOrders();
+  }, [filterStatus]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchOrders();
+  };
+
+  const handleStatusUpdate = async (id: string, status: string) => {
+    try {
+      await adminOrderService.updateStatus(id, status);
+      showToast(`Order marked as ${status}`);
+      if (selectedOrder?._id === id) {
+        const updated = await adminOrderService.getById(id);
+        setSelectedOrder(updated);
+      }
+      fetchOrders();
+    } catch (err: any) {
+      showToast(err.response?.data?.message || "Status update failed", "error");
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "pending":
-        return <Clock size={16} />;
-      case "processing":
-        return <ShoppingCart size={16} />;
-      case "shipped":
-        return <Truck size={16} />;
-      case "delivered":
-        return <Check size={16} />;
-      case "cancelled":
-        return <Package size={16} />;
-      default:
-        return <Package size={16} />;
+      case "pending": return <Clock size={16} />;
+      case "confirmed": return <CheckCircle size={16} />;
+      case "processing": return <Package size={16} />;
+      case "shipped": return <Truck size={16} />;
+      case "delivered": return <CheckCircle size={16} />;
+      case "cancelled": return <XCircle size={16} />;
+      case "returned": return <Undo2 size={16} />;
+      default: return <Clock size={16} />;
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-IN", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+  const getStatusClass = (status: string) => {
+    switch (status) {
+      case "pending": return "bg-orange-50 text-orange-600 border-orange-100";
+      case "confirmed": return "bg-blue-50 text-blue-600 border-blue-100";
+      case "processing": return "bg-zinc-100 text-black border-zinc-200";
+      case "shipped": return "bg-black text-white border-black shadow-lg shadow-black/10";
+      case "delivered": return "bg-green-50 text-green-600 border-green-100";
+      case "cancelled": return "bg-red-50 text-red-600 border-red-100";
+      default: return "bg-zinc-50 text-zinc-400 border-zinc-100";
+    }
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-10">
+      {/* Toast */}
+      {toast && (
+        <div className={`fixed top-6 right-6 z-[100] flex items-center gap-3 px-5 py-3 rounded-xl shadow-lg font-bold text-[11px] uppercase tracking-widest ${
+          toast.type === "success" ? "bg-green-600 text-white" : "bg-red-600 text-white"
+        }`}>
+          {toast.type === "success" ? <CheckCircle size={16} /> : <AlertTriangle size={16} />}
+          {toast.msg}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black tracking-tighter uppercase italic">
-            Orders Management
-          </h1>
+          <h1 className="text-4xl font-black tracking-tighter uppercase italic">Orders Logistics</h1>
           <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-2">
-            Track, manage, and fulfill customer orders
+            Track and process shipments efficiently
           </p>
         </div>
-        <button className="px-6 py-3 bg-black text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-zinc-800 transition-all flex items-center gap-2 w-fit">
-          <Download size={18} />
-          Export Orders
-        </button>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-zinc-200 p-4">
-          <p className="text-[9px] font-black uppercase tracking-widest text-zinc-600 mb-2">
-            Total Orders
-          </p>
-          <p className="text-3xl font-black">{orders.length}</p>
-          <p className="text-[9px] text-zinc-500 mt-2">+2 this week</p>
-        </div>
-        <div className="bg-white rounded-xl border border-zinc-200 p-4">
-          <p className="text-[9px] font-black uppercase tracking-widest text-orange-600 mb-2">
-            Pending
-          </p>
-          <p className="text-3xl font-black text-orange-600">
-            {orders.filter((o) => o.status === "pending").length}
-          </p>
-        </div>
-        <div className="bg-white rounded-xl border border-zinc-200 p-4">
-          <p className="text-[9px] font-black uppercase tracking-widest text-purple-600 mb-2">
-            In Transit
-          </p>
-          <p className="text-3xl font-black text-purple-600">
-            {orders.filter((o) => o.status === "shipped").length}
-          </p>
-        </div>
-        <div className="bg-white rounded-xl border border-zinc-200 p-4">
-          <p className="text-[9px] font-black uppercase tracking-widest text-green-600 mb-2">
-            Delivered
-          </p>
-          <p className="text-3xl font-black text-green-600">
-            {orders.filter((o) => o.status === "delivered").length}
-          </p>
+        <div className="flex gap-3">
+          <button 
+            onClick={fetchOrders}
+            className="px-5 py-3 border border-zinc-200 rounded-xl text-[10px] font-black uppercase hover:bg-zinc-50 transition-all flex items-center gap-2"
+          >
+            <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+            Sync Orders
+          </button>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-4">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-2 block">
-              Search Orders
-            </label>
-            <div className="relative">
-              <Search
-                size={18}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"
-              />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by order ID or customer name..."
-                className="w-full h-11 pl-12 pr-4 rounded-xl bg-zinc-50 border border-zinc-200 focus:outline-none focus:border-black focus:bg-white text-[10px] font-bold"
-              />
-            </div>
-          </div>
-
-          <div className="flex gap-4">
-            <div>
-              <label className="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-2 block">
-                Order Status
-              </label>
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="h-11 px-4 rounded-xl bg-zinc-50 border border-zinc-200 focus:outline-none focus:border-black text-[10px] font-bold uppercase"
-              >
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="processing">Processing</option>
-                <option value="shipped">Shipped</option>
-                <option value="delivered">Delivered</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-2 block">
-                Payment
-              </label>
-              <select
-                value={filterPayment}
-                onChange={(e) => setFilterPayment(e.target.value)}
-                className="h-11 px-4 rounded-xl bg-zinc-50 border border-zinc-200 focus:outline-none focus:border-black text-[10px] font-bold uppercase"
-              >
-                <option value="all">All Payments</option>
-                <option value="completed">Completed</option>
-                <option value="pending">Pending</option>
-                <option value="failed">Failed</option>
-              </select>
-            </div>
-          </div>
-        </div>
+      {/* Search & Filter */}
+      <div className="bg-white rounded-3xl border border-zinc-200 p-6 flex flex-col md:flex-row gap-4 shadow-sm shadow-zinc-100">
+        <form onSubmit={handleSearch} className="relative flex-1">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by Order ID, User ID..."
+            className="w-full h-12 pl-11 pr-4 rounded-2xl bg-zinc-50 border border-zinc-200 focus:outline-none focus:border-black text-[11px] font-bold uppercase tracking-widest placeholder:text-zinc-400"
+          />
+        </form>
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="h-12 px-6 rounded-2xl bg-zinc-50 border border-zinc-200 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-black"
+        >
+          <option value="all">Every State</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="processing">In Logistics</option>
+          <option value="shipped">On Road</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
       </div>
 
-      {/* Orders Table */}
-      <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden">
+      {/* Modern Table Layout */}
+      <div className="bg-white rounded-[40px] border border-zinc-200 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-zinc-50 border-b border-zinc-200">
-              <tr>
-                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-zinc-600">
-                  Order ID
-                </th>
-                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-zinc-600">
-                  Customer
-                </th>
-                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-zinc-600">
-                  Delivery
-                </th>
-                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-zinc-600">
-                  Items
-                </th>
-                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-zinc-600">
-                  Amount
-                </th>
-                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-zinc-600">
-                  Status
-                </th>
-                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-zinc-600">
-                  Payment
-                </th>
-                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-zinc-600">
-                  Date
-                </th>
-                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-zinc-600">
-                  Action
-                </th>
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-zinc-50/50 border-b border-zinc-100">
+                <th className="p-6 text-[10px] font-black uppercase tracking-widest text-zinc-500">Official #Order</th>
+                <th className="p-6 text-[10px] font-black uppercase tracking-widest text-zinc-500">Financials</th>
+                <th className="p-6 text-[10px] font-black uppercase tracking-widest text-zinc-500">Current Status</th>
+                <th className="p-6 text-[10px] font-black uppercase tracking-widest text-zinc-500 text-right">Process</th>
               </tr>
             </thead>
-            <tbody>
-              {filteredOrders.length > 0 ? (
-                filteredOrders.map((order) => (
-                  <tr
-                    key={order.id}
-                    className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors"
-                  >
-                    <td className="py-4 px-6 font-black text-[10px] uppercase tracking-tighter">
-                      {order.id}
+            <tbody className="divide-y divide-zinc-100">
+              {loading ? (
+                <tr><td colSpan={4} className="p-20 text-center"><Loader2 size={40} className="animate-spin text-zinc-200 mx-auto" /></td></tr>
+              ) : orders.length === 0 ? (
+                <tr><td colSpan={4} className="p-20 text-center"><ShoppingBag size={48} className="text-zinc-100 mx-auto mb-4" /><p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Logistics idle - Incoming 0</p></td></tr>
+              ) : (
+                orders.map((order) => (
+                  <tr key={order._id} className="group hover:bg-zinc-50 transition-all cursor-pointer" onClick={() => setSelectedOrder(order)}>
+                    <td className="p-6">
+                       <div className="flex items-center gap-4">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-zinc-400 bg-zinc-100 group-hover:bg-zinc-900 group-hover:text-white transition-colors`}>
+                             <ShoppingBag size={18} />
+                          </div>
+                          <div>
+                             <p className="text-[14px] font-black uppercase tracking-tighter leading-none italic">#{order.orderNumber}</p>
+                             <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mt-1.5">{new Date(order.createdAt).toLocaleDateString()}</p>
+                          </div>
+                       </div>
                     </td>
-                    <td className="py-4 px-6">
-                      <div>
-                        <p className="font-black text-[10px] uppercase tracking-widest">
-                          {order.customer.name}
-                        </p>
-                        <p className="text-[9px] text-zinc-500">
-                          {order.customer.email}
-                        </p>
-                      </div>
+                    <td className="p-6">
+                       <p className="text-[13px] font-black text-black">₹{order.totalAmount.toLocaleString()}</p>
+                       <p className="text-[9px] font-bold text-zinc-400 uppercase mt-1 tracking-widest flex items-center gap-1.5">
+                          <CheckCircle size={10} className={order.paymentStatus === 'paid' ? 'text-green-500' : 'text-orange-500'} />
+                          {order.paymentStatus}
+                       </p>
                     </td>
-                    <td className="py-4 px-6">
-                      <div className="flex items-start gap-2">
-                        <MapPin size={14} className="text-zinc-400 mt-0.5" />
-                        <p className="text-[9px] text-zinc-600">
-                          {order.deliveryAddress}
-                        </p>
-                      </div>
+                    <td className="p-6">
+                       <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${getStatusClass(order.orderStatus)}`}>
+                          {getStatusIcon(order.orderStatus)}
+                          {order.orderStatus}
+                       </span>
                     </td>
-                    <td className="py-4 px-6 font-bold text-[10px]">
-                      {order.items}
-                    </td>
-                    <td className="py-4 px-6 font-black text-[10px]">
-                      ₹{order.amount}
-                    </td>
-                    <td className="py-4 px-6">
-                      <span
-                        className={`text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-full inline-flex items-center gap-1 ${getStatusColor(
-                          order.status
-                        )}`}
-                      >
-                        {getStatusIcon(order.status)}
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6">
-                      <span
-                        className={`text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${getPaymentColor(
-                          order.paymentStatus
-                        )}`}
-                      >
-                        {order.paymentStatus}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-[9px] text-zinc-600">
-                      {formatDate(order.date)}
-                    </td>
-                    <td className="py-4 px-6">
-                      <button className="p-2 hover:bg-zinc-100 rounded-lg transition-colors">
-                        <Eye size={16} className="text-zinc-600" />
-                      </button>
+                    <td className="p-6 text-right">
+                       <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                          <button 
+                            onClick={() => setSelectedOrder(order)}
+                            className="w-11 h-11 bg-zinc-50 text-zinc-600 rounded-xl flex items-center justify-center hover:bg-zinc-900 hover:text-white transition-all shadow-sm"
+                          >
+                             <Eye size={18} />
+                          </button>
+                          <div className="relative group/actions">
+                             <button className="h-11 px-4 bg-zinc-50 border border-zinc-100 text-[9px] font-black uppercase rounded-xl hover:bg-black hover:text-white transition-all">
+                                Update
+                             </button>
+                             <div className="absolute right-0 bottom-full mb-2 w-48 bg-white rounded-2xl shadow-2xl border border-zinc-100 p-2 hidden group-hover/actions:block z-50">
+                                {["confirmed", "processing", "shipped", "delivered", "cancelled"].map(st => (
+                                   <button 
+                                     key={st}
+                                     disabled={order.orderStatus === st}
+                                     onClick={() => handleStatusUpdate(order._id, st)}
+                                     className="w-full text-left p-3 text-[10px] font-black uppercase hover:bg-black hover:text-white rounded-xl disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-zinc-300"
+                                   >
+                                      Mark {st}
+                                   </button>
+                                ))}
+                             </div>
+                          </div>
+                       </div>
                     </td>
                   </tr>
                 ))
-              ) : (
-                <tr>
-                  <td colSpan={9} className="py-12 text-center">
-                    <p className="text-zinc-400 font-bold text-[10px] uppercase tracking-widest">
-                      No orders found
-                    </p>
-                  </td>
-                </tr>
               )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Info */}
-      <div className="flex items-center justify-between text-[10px]">
-        <p className="font-bold text-zinc-600 uppercase tracking-widest">
-          Showing {filteredOrders.length} of {orders.length} orders
-        </p>
-        <div className="flex items-center gap-2">
-          <button className="px-4 py-2 rounded-lg border border-zinc-200 hover:bg-zinc-50 font-black uppercase text-[9px]">
-            Previous
-          </button>
-          <button className="w-10 h-10 rounded-lg bg-black text-white font-black text-[9px] flex items-center justify-center">
-            1
-          </button>
-          <button className="px-4 py-2 rounded-lg border border-zinc-200 hover:bg-zinc-50 font-black uppercase text-[9px]">
-            Next
-          </button>
+      {/* ── Detail Modal ── */}
+      {selectedOrder && (
+        <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-xl flex items-center justify-center p-4">
+           <div className="bg-white rounded-[40px] w-full max-w-4xl shadow-2xl max-h-[90vh] overflow-y-auto flex flex-col">
+              <div className="p-10 border-b border-zinc-100 flex items-center justify-between sticky top-0 bg-white z-10 rounded-t-[40px]">
+                 <div>
+                    <h2 className="text-3xl font-black uppercase tracking-tighter italic italic">Order Info</h2>
+                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mt-1">Order Ref: #{selectedOrder.orderNumber}</p>
+                 </div>
+                 <button onClick={() => setSelectedOrder(null)} className="p-4 bg-zinc-50 rounded-2xl hover:bg-black hover:text-white transition-all">
+                    <XCircle size={24} />
+                 </button>
+              </div>
+
+              <div className="p-10 grid grid-cols-1 md:grid-cols-2 gap-10">
+                 {/* Items */}
+                 <div className="space-y-6">
+                    <h3 className="text-[11px] font-black uppercase tracking-[0.25em] text-zinc-400">Order Manifest</h3>
+                    <div className="space-y-4">
+                       {selectedOrder.items.map((item: any, idx: number) => (
+                         <div key={idx} className="flex gap-4 p-4 bg-zinc-50 border border-zinc-100 rounded-3xl group transition-all hover:bg-white hover:border-black">
+                            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center border border-zinc-100 font-bold overflow-hidden">
+                               {item.productId?.images?.[0] ? <img src={item.productId.images[0]} alt="" className="w-full h-full object-cover" /> : <Package size={24} className="text-zinc-200" />}
+                            </div>
+                            <div className="flex-1">
+                               <p className="text-[12px] font-black uppercase tracking-tighter">{item.name || 'Product Item'}</p>
+                               <p className="text-[10px] font-bold text-zinc-400 mt-1 uppercase">Price: ₹{item.price} × Qty {item.quantity}</p>
+                            </div>
+                            <div className="text-right">
+                               <p className="text-[12px] font-black">₹{item.price * item.quantity}</p>
+                            </div>
+                         </div>
+                       ))}
+                    </div>
+                 </div>
+
+                 {/* Customer & Shipping */}
+                 <div className="space-y-10">
+                    <div>
+                       <h3 className="text-[11px] font-black uppercase tracking-[0.25em] text-zinc-400 mb-4">Logistics Timeline</h3>
+                       <div className="space-y-1 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-zinc-100">
+                          {["pending", "confirmed", "processing", "shipped", "delivered"].map((st, i) => {
+                             const isPast = ["pending", "confirmed", "processing", "shipped", "delivered"].indexOf(selectedOrder.orderStatus) >= i;
+                             return (
+                               <div key={st} className="flex items-center gap-5 relative group">
+                                  <div className={`w-6 h-6 rounded-full border-4 border-white shadow-md z-10 transition-all ${isPast ? 'bg-black scale-110' : 'bg-zinc-100'}`} />
+                                  <span className={`text-[10px] font-black uppercase tracking-widest ${isPast ? 'text-black' : 'text-zinc-300'}`}>{st}</span>
+                               </div>
+                             );
+                          })}
+                       </div>
+                    </div>
+
+                    <div className="bg-zinc-50 rounded-[35px] p-8 border border-zinc-100 space-y-6">
+                       <div>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 flex items-center gap-2"><Receipt size={14} /> Shipping Information</p>
+                          <p className="text-[12px] font-bold leading-relaxed">
+                             {selectedOrder.shippingAddress?.fullName}<br />
+                             {selectedOrder.shippingAddress?.addressLine1}<br />
+                             {selectedOrder.shippingAddress?.city}, {selectedOrder.shippingAddress?.state} - {selectedOrder.shippingAddress?.pincode}
+                          </p>
+                       </div>
+                       <div className="pt-6 border-t border-zinc-200">
+                          <div className="flex justify-between items-center mb-2">
+                             <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Total Net</span>
+                             <span className="text-2xl font-black italic">₹{selectedOrder.totalAmount.toLocaleString()}</span>
+                          </div>
+                          <span className={`text-[9px] font-black uppercase px-3 py-1 rounded-full ${selectedOrder.paymentStatus === 'paid' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}`}>
+                             {selectedOrder.paymentStatus} Payment
+                          </span>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

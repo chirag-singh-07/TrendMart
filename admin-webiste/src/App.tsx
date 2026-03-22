@@ -9,6 +9,9 @@ import Categories from "./pages/Categories";
 import Banners from "./pages/Banners";
 import Settings from "./pages/Settings";
 import AdminLogin from "./pages/AdminLogin";
+import Coupons from "./pages/Coupons";
+import Notifications from "./pages/Notifications";
+import Earnings from "./pages/Earnings";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -34,6 +37,9 @@ function App() {
           <Route path="/orders" element={<Orders />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/banners" element={<Banners />} />
+          <Route path="/coupons" element={<Coupons />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/earnings" element={<Earnings />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </AdminLayout>

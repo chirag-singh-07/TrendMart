@@ -65,6 +65,9 @@ export const uploadReviewImages = createMulterMiddleware("reviews", 3).array(
 export const uploadDocument = createMulterMiddleware("documents", 1).single(
   "document",
 );
+export const uploadCategoryImage = createMulterMiddleware("categories", 1).single(
+  "image",
+);
 
 /**
  * Handles Multer errors and returns consistent error responses

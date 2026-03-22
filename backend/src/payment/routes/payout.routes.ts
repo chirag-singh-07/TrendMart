@@ -26,14 +26,14 @@ router.get(
 router.get(
   "/",
   authenticate,
-  authorize("admin"),
+  authorize("admin", "super_admin", "moderator"),
   payoutController.getAllPayouts,
 );
 
 router.post(
   "/initiate",
   authenticate,
-  authorize("admin"),
+  authorize("admin", "super_admin", "moderator"),
   validateRequest(payoutSchema),
   payoutController.initiatePayout,
 );
@@ -41,21 +41,21 @@ router.post(
 router.patch(
   "/:payoutId/process",
   authenticate,
-  authorize("admin"),
+  authorize("admin", "super_admin", "moderator"),
   payoutController.processPayout,
 );
 
 router.patch(
   "/:payoutId/complete",
   authenticate,
-  authorize("admin"),
+  authorize("admin", "super_admin", "moderator"),
   payoutController.completePayout,
 );
 
 router.patch(
   "/:payoutId/fail",
   authenticate,
-  authorize("admin"),
+  authorize("admin", "super_admin", "moderator"),
   payoutController.failPayout,
 );
 

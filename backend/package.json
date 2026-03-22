@@ -11,6 +11,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "setup-admin": "tsx src/scripts/setupAdmin.ts",
+    "create-admin": "tsx src/scripts/createAdmin.ts",
     "mongodb-start-local": "C:\\Program Files\\MongoDB\\Server\\8.2\\bin\\mongod.exe --dbpath=\"C:\\data\\db\"",
     "mongodb-stop-local": "taskkill /F /IM mongod.exe"
   },

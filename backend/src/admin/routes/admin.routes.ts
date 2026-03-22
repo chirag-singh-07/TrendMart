@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import * as adminController from "../controllers/adminController";
-import { verifyAdminToken } from "../middlewares/adminAuth.middleware";
+import { verifyAdminToken, verifySuperAdmin } from "../middlewares/adminAuth.middleware";
 import { validateRequest } from "../../middleware/validate.middleware";
 import { z } from "zod";
 
@@ -79,6 +79,7 @@ router.post(
 router.post(
   "/create-user",
   verifyAdminToken,
+  verifySuperAdmin,
   validateRequest(createAdminSchema),
   adminController.createAdminUser
 );
@@ -112,6 +113,7 @@ router.post(
 router.post(
   "/reset-password/:id",
   verifyAdminToken,
+  verifySuperAdmin,
   validateRequest(
     z.object({
       body: z.object({
@@ -126,6 +128,7 @@ router.post(
 router.patch(
   "/permissions/:id",
   verifyAdminToken,
+  verifySuperAdmin,
   validateRequest(permissionsSchema),
   adminController.updatePermissions
 );

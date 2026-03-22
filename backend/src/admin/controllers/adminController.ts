@@ -38,14 +38,11 @@ export const createAdminUser = async (
       });
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     // Create admin
     const admin = await Admin.create({
       name,
       email,
-      password: hashedPassword,
+      password, // Mongoose hook will hash this
       role,
       permissions: permissions || [],
       status: "active",
@@ -261,11 +258,16 @@ export const adminLogin = async (
     const token = jwt.sign(
       {
         adminId: admin._id,
+        userId: admin._id.toString(), // Add for compatibility with general authenticate middleware
         email: admin.email,
         role: admin.role,
       },
-      process.env.JWT_SECRET || "your-secret-key",
-      { expiresIn: "24h" }
+      process.env.JWT_ACCESS_SECRET || "your-secret-key",
+      { 
+        expiresIn: "24h",
+        issuer: "ecoom-api",
+        audience: "ecoom-client"
+      }
     );
 
     res.status(200).json({
@@ -314,8 +316,8 @@ export const changePassword = async (
       });
     }
 
-    // Hash new password
-    admin.password = await bcrypt.hash(newPassword, 10);
+    // Set new password (Mongoose hook will hash this)
+    admin.password = newPassword;
     await admin.save();
 
     res.status(200).json({
@@ -353,8 +355,8 @@ export const resetPassword = async (
       });
     }
 
-    // Hash new password
-    admin.password = await bcrypt.hash(newPassword, 10);
+    // Set new password (Mongoose hook will hash this)
+    admin.password = newPassword;
     admin.loginAttempts = 0;
     admin.lockoutUntil = undefined;
     await admin.save();

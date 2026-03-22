@@ -10,7 +10,7 @@ import {
 
 const router = Router();
 
-router.use(authenticate, authorize("admin"));
+router.use(authenticate, authorize("admin", "super_admin", "moderator"));
 
 router.get(
   "/",

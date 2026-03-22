@@ -103,6 +103,24 @@ export class UploadController {
     }
   };
 
+  // --- Category Image ---
+  uploadCategoryImage = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      if (!req.file) throw new AppError("No file uploaded", 400);
+      const result = await uploadService.processSingleFile(
+        req.file,
+        "categories",
+      );
+      ok(res, "Category image uploaded successfully", result);
+    } catch (err) {
+      next(err);
+    }
+  };
+
   // --- Delete File ---
   deleteFile = async (req: Request, res: Response, next: NextFunction) => {
     try {

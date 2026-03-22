@@ -3,7 +3,7 @@
 /**
  * Admin Setup Script
  * This script creates an initial admin user for the TrendMart system
- * 
+ *
  * Usage:
  *   npm run create-admin
  *   or
@@ -18,7 +18,8 @@ import Admin from "../models/Admin.model.js";
 // Load environment variables
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGO_URI || "mongodb://localhost:27017/trendmart";
+const MONGODB_URI =
+  process.env.MONGO_URI || "mongodb://localhost:27017/trendmart";
 
 interface AdminInput {
   name: string;
@@ -85,6 +86,23 @@ function getDefaultPermissions(role: string): string[] {
       "view_logs",
       "view_settings",
       "manage_settings",
+      "view_earnings",
+      "manage_earnings",
+      "view_coupons",
+      "manage_coupons",
+      "delete_coupons",
+      "view_notifications",
+      "manage_notifications",
+      "delete_notifications",
+      "view_reviews",
+      "manage_reviews",
+      "delete_reviews",
+      "view_staff",
+      "manage_staff",
+      "delete_staff",
+      "view_staff",
+      "manage_staff",
+      "delete_staff",
     ],
     admin: [
       "view_dashboard",
@@ -100,12 +118,32 @@ function getDefaultPermissions(role: string): string[] {
       "view_banners",
       "manage_banners",
       "view_logs",
+      "view_coupons",
+      "manage_coupons",
+      "delete_coupons",
+      "view_notifications",
+      "manage_notifications",
+      "delete_notifications",
+      "view_reviews",
+      "manage_reviews",
+      "delete_reviews",
+      "view_staff",
+      "manage_staff",
     ],
     moderator: [
       "view_dashboard",
       "view_orders",
       "manage_orders",
       "view_analytics",
+      "view_users",
+      "manage_users",
+      "view_products",
+      "manage_products",
+      "view_categories",
+      "manage_categories",
+      "view_banners",
+      "manage_banners",
+      "view_logs",
     ],
   };
 
@@ -124,14 +162,11 @@ async function createAdmin(adminData: AdminInput) {
       return null;
     }
 
-    // Hash password
-    const hashedPassword = await bcryptjs.hash(adminData.password, 10);
-
     // Create admin
     const admin = await Admin.create({
       name: adminData.name,
       email: adminData.email,
-      password: hashedPassword,
+      password: adminData.password, // Mongoose hook will hash this
       role: adminData.role,
       permissions: getDefaultPermissions(adminData.role),
       status: "active",
@@ -163,7 +198,7 @@ async function setupAdmin() {
       console.log("\n📋 Existing admins:");
       admins.forEach((admin) => {
         console.log(
-          `   • ${admin.name} (${admin.email}) - ${admin.role} [${admin.status}]`
+          `   • ${admin.name} (${admin.email}) - ${admin.role} [${admin.status}]`,
         );
       });
 
@@ -190,11 +225,9 @@ async function setupAdmin() {
       console.log(`   Password: ${defaultAdmin.password}`);
       console.log(`   Role: ${createdAdmin.role}`);
       console.log("\n⚠️  IMPORTANT:");
+      console.log("   Please change this password after your first login!");
       console.log(
-        "   Please change this password after your first login!"
-      );
-      console.log(
-        "   Keep these credentials secure and do not share with others."
+        "   Keep these credentials secure and do not share with others.",
       );
     }
 
@@ -202,7 +235,7 @@ async function setupAdmin() {
   } catch (error) {
     console.error(
       "\n❌ Error during setup:",
-      error instanceof Error ? error.message : error
+      error instanceof Error ? error.message : error,
     );
     try {
       await disconnectDB();

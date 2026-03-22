@@ -35,7 +35,7 @@ export const verifyAdminToken = (
     // Verify token
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || "your-secret-key"
+      process.env.JWT_ACCESS_SECRET || "your-secret-key"
     ) as JwtPayload;
 
     // Attach admin info to request
@@ -141,7 +141,7 @@ export const optionalAdminAuth = (
     if (token) {
       const decoded = jwt.verify(
         token,
-        process.env.JWT_SECRET || "your-secret-key"
+        process.env.JWT_ACCESS_SECRET || "your-secret-key"
       ) as JwtPayload;
       req.adminId = decoded.adminId;
       req.admin = decoded;

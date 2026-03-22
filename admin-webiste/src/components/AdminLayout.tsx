@@ -1,4 +1,4 @@
-import React, { type ReactNode, useState } from "react";
+import React, { type ReactNode, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   BarChart3,
@@ -13,6 +13,9 @@ import {
   X,
   Bell,
   SearchIcon,
+  Ticket,
+  Megaphone,
+  DollarSign,
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -24,15 +27,34 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  const [adminData, setAdminData] = useState<any>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("adminUser");
+    if (stored) setAdminData(JSON.parse(stored));
+  }, []);
+
   const menuItems = [
     { icon: BarChart3, label: "Dashboard", path: "/" },
     { icon: Users, label: "Users", path: "/users" },
     { icon: Package, label: "Products", path: "/products" },
     { icon: ShoppingCart, label: "Orders", path: "/orders" },
     { icon: Grid, label: "Categories", path: "/categories" },
+    { icon: Ticket, label: "Coupons", path: "/coupons" },
+    { icon: Megaphone, label: "Notifications", path: "/notifications" },
+    {
+      icon: DollarSign,
+      label: "Earnings",
+      path: "/earnings",
+      roles: ["super_admin"],
+    },
     { icon: ImagePlus, label: "Banners", path: "/banners" },
     { icon: Settings, label: "Settings", path: "/settings" },
   ];
+
+  const filteredMenuItems = menuItems.filter(
+    (item) => !item.roles || (adminData && item.roles.includes(adminData.role)),
+  );
 
   const handleLogout = () => {
     localStorage.removeItem("adminToken");
@@ -74,7 +96,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
         {/* Navigation Menu */}
         <nav className="flex-1 p-4 space-y-2">
-          {menuItems.map((item) => {
+          {filteredMenuItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <button
@@ -147,12 +169,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <div className="flex items-center gap-3 pl-6 border-l border-zinc-200">
               <div className="text-right">
                 <p className="text-[10px] font-black uppercase tracking-widest">
-                  Admin User
+                  {adminData?.name || "Admin User"}
                 </p>
-                <p className="text-[9px] text-zinc-500">Super Admin</p>
+                <p className="text-[9px] text-zinc-500 uppercase">
+                  {adminData?.role || "Staff"}
+                </p>
               </div>
-              <div className="w-10 h-10 bg-zinc-200 rounded-lg flex items-center justify-center font-black">
-                A
+              <div className="w-10 h-10 bg-zinc-900 text-white rounded-lg flex items-center justify-center font-black">
+                {adminData?.name?.[0] || "A"}
               </div>
             </div>
           </div>

@@ -5,7 +5,8 @@ export type FolderKey =
   | "banners"
   | "shops"
   | "reviews"
-  | "documents";
+  | "documents"
+  | "categories";
 
 export interface IUploadedFile {
   originalName: string;

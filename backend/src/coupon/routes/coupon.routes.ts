@@ -38,7 +38,7 @@ router.get(
 // Note: We define these separately but they can be exported for mounting
 const adminRouter = Router();
 
-adminRouter.use(authenticate, authorize("admin"));
+adminRouter.use(authenticate, authorize("admin", "super_admin", "moderator"));
 
 adminRouter.get(
   "/",

@@ -12,7 +12,7 @@ import {
 const router = Router();
 
 router.use(authenticate);
-router.use(authorize("admin"));
+router.use(authorize("admin", "super_admin", "moderator"));
 
 router.get(
   "/",
@@ -26,7 +26,7 @@ router.get(
   adminOrderController.getRefunds,
 );
 
-router.get("/revenue", adminOrderController.getRevenueReport);
+router.get("/revenue", authorize("super_admin"), adminOrderController.getRevenueReport);
 
 router.get("/:orderId", adminOrderController.getOrderDetail);
 

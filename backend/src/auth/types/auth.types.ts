@@ -5,13 +5,15 @@ export type Role =
   | "buyer"
   | "seller"
   | "admin"
+  | "super_admin"
+  | "moderator"
   | "delivery"
   | "distributor"
   | "developer";
 
 export interface ITokenPayload {
   userId: string;
-  role: Role;
+  role: Role | "super_admin" | "moderator";
   email: string;
   deviceId?: string; // made optional to allow login without explicit device tracking
 }

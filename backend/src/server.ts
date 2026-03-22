@@ -34,6 +34,11 @@ import addressRouter from "./delivery/routes/address.routes.js";
 import shipmentRouter from "./delivery/routes/shipment.routes.js";
 import trackingRouter from "./delivery/routes/tracking.routes.js";
 import deliveryPartnerRouter from "./delivery/routes/deliveryPartner.routes.js";
+import adminRouter from "./admin/routes/admin.routes.js";
+import adminBannerRouter from "./admin/routes/banner.routes.js";
+import adminProductCategoryRouter from "./admin/routes/productCategory.routes.js";
+import adminNotificationRouter from "./admin/routes/notification.routes.js";
+import adminUserManagementRouter from "./admin/routes/userManagement.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { uploadConfig } from "./upload/config/upload.config.js";
 import { ensureDirectoryExists } from "./upload/utils/fileHelper.util.js";
@@ -50,7 +55,12 @@ const BACKEND_URL = process.env.BACKEND_URL || "http://localhost";
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: [
+      process.env.CLIENT_URL || "http://localhost:3000",
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:5175",
+    ],
     credentials: true, // required for cookies to work cross-origin
   }),
 );
@@ -94,6 +104,11 @@ app.use("/api/addresses", addressRouter);
 app.use("/api/shipments", shipmentRouter);
 app.use("/api/track", trackingRouter);
 app.use("/api/delivery-partners", deliveryPartnerRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/admin/banners", adminBannerRouter);
+app.use("/api/admin/notifications", adminNotificationRouter);
+app.use("/api/admin/users", adminUserManagementRouter);
+app.use("/api/admin/manage", adminProductCategoryRouter);
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
 

@@ -3,6 +3,7 @@ import { orderService } from "../services/order.service.js";
 import { orderStatusService } from "../services/orderStatus.service.js";
 import { refundService } from "../services/refund.service.js";
 import { sellerBreakdownService } from "../services/sellerBreakdown.service.js";
+import Order from "../../models/Order.model.js";
 
 const ok = (res: Response, message: string, data?: any) =>
   res.status(200).json({ success: true, message, ...(data ? { data } : {}) });
@@ -123,11 +124,51 @@ export const adminOrderController = {
         : new Date(Date.now() - 30 * 24 * 3600 * 1000);
       const toDate = req.query.toDate ? new Date(req.query.toDate) : new Date();
 
-      const totalRevenue =
-        await sellerBreakdownService.calculatePlatformRevenue(fromDate, toDate);
+      // Get all paid orders in range
+      const orders = await Order.find({
+        createdAt: { $gte: fromDate, $lte: toDate },
+        paymentStatus: "paid",
+      }).sort({ createdAt: -1 });
+
+      let totalCommission = 0;
+      let totalSales = 0;
+      const dailyDataMap = new Map<string, number>();
+
+      orders.forEach((order: any) => {
+        totalSales += order.finalAmount;
+        const commission = order.sellerBreakdown.reduce(
+          (sum: number, b: any) => sum + b.commissionAmount,
+          0,
+        );
+        totalCommission += commission;
+
+        const dateStr = order.createdAt.toISOString().split("T")[0];
+        dailyDataMap.set(dateStr, (dailyDataMap.get(dateStr) || 0) + commission);
+      });
+
+      // Prepare daily breakdown for graph
+      const dailyBreakdown = Array.from(dailyDataMap.entries())
+        .map(([date, amount]) => ({ date, amount }))
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+      // Recent transactions (last 10)
+      const recentTransactions = orders.slice(0, 10).map((order: any) => ({
+        id: order.orderNumber,
+        amount: order.finalAmount,
+        commission: order.sellerBreakdown.reduce(
+          (sum: number, b: any) => sum + b.commissionAmount,
+          0,
+        ),
+        date: order.createdAt,
+      }));
+
       ok(res, "Revenue report generated", {
-        totalCommission: totalRevenue,
+        totalCommission,
+        totalOrders: orders.length,
+        averageOrderValue: orders.length > 0 ? totalSales / orders.length : 0,
         currency: "INR",
+        dailyBreakdown,
+        recentTransactions,
         fromDate,
         toDate,
       });

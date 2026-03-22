@@ -14,7 +14,7 @@ const router = Router();
 router.post(
   "/process/:orderId",
   authenticate,
-  authorize("admin"),
+  authorize("admin", "super_admin", "moderator"),
   validateRequest(processRefundSchema),
   refundController.processRefund,
 );
@@ -22,7 +22,7 @@ router.post(
 router.post(
   "/partial/:orderId",
   authenticate,
-  authorize("admin"),
+  authorize("admin", "super_admin", "moderator"),
   validateRequest(partialRefundSchema),
   refundController.processPartialRefund,
 );

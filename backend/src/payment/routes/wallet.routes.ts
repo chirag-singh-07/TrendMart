@@ -44,7 +44,7 @@ router.post(
 router.post(
   "/admin/credit",
   authenticate,
-  authorize("admin"),
+  authorize("admin", "super_admin", "moderator"),
   validateRequest(adminCreditSchema),
   walletController.adminCreditWallet,
 );

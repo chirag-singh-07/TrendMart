@@ -9,6 +9,7 @@ import {
   uploadShopImage,
   uploadReviewImages,
   uploadDocument,
+  uploadCategoryImage,
   handleMulterError,
 } from "../middlewares/multer.middleware.js";
 
@@ -30,7 +31,7 @@ router.post(
 // Seller, Admin only
 router.post(
   "/product-images",
-  authorize("seller", "admin"),
+  authorize("seller", "admin", "super_admin", "moderator"),
   uploadProductImage,
   handleMulterError,
   uploadController.uploadProductImages,
@@ -40,7 +41,7 @@ router.post(
 // Admin only
 router.post(
   "/banner",
-  authorize("admin"),
+  authorize("admin", "super_admin", "moderator"),
   uploadBannerImage,
   handleMulterError,
   uploadController.uploadBanner,
@@ -76,8 +77,18 @@ router.post(
   uploadController.uploadDocument,
 );
 
+// --- Category Image ---
+// Admin only
+router.post(
+  "/category",
+  authorize("admin", "super_admin", "moderator"),
+  uploadCategoryImage,
+  handleMulterError,
+  uploadController.uploadCategoryImage,
+);
+
 // --- Delete File ---
 // Admin only
-router.delete("/file", authorize("admin"), uploadController.deleteFile);
+router.delete("/file", authorize("admin", "super_admin", "moderator"), uploadController.deleteFile);
 
 export default router;
