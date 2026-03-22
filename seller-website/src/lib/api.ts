@@ -17,7 +17,25 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
+);
+
+// Add a response interceptor to handle 401s centrally
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.warn("Unauthorized access detected. Revoking session...");
+      localStorage.removeItem("seller_token");
+      localStorage.removeItem("seller_data");
+
+      // Force redirect to login if not already there
+      if (!window.location.pathname.includes("/login")) {
+        window.location.href = "/login?expired=true";
+      }
+    }
+    return Promise.reject(error);
+  },
 );
 
 export default api;

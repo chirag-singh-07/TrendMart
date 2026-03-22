@@ -19,6 +19,8 @@ export const createProductSchema = z.object({
     sku: z.string().min(3).max(50),
     barcode: z.string().optional(),
     tags: z.array(z.string()).max(10).optional(),
+    images: z.array(z.string()).optional(),
+    thumbnail: z.string().optional(),
     weight: z.number().positive().optional(),
     dimensions: z
       .object({

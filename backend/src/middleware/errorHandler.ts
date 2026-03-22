@@ -22,6 +22,12 @@ export const errorHandler = (
 ): void => {
   // ── Operational errors (thrown intentionally via AppError) ────────────────
   if (err instanceof AppError) {
+    if (err.statusCode === 401) {
+      console.warn(`[errorHandler] Operational 401: ${err.message}`, {
+          path: req.path,
+          method: req.method,
+      });
+    }
     const body: Record<string, unknown> = {
       success: false,
       message: err.message,
